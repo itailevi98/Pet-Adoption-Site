@@ -1,13 +1,19 @@
-import { useState } from "react";
-import { createUser } from "../../lib/api";
-
-export default function SignupComponent() {
+export default function FormComponent() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [password2, setPassword2] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
+
+    /* 
+        ^^^^^^^^^^^^ 
+        These are gonna have to change once I set up 
+        authorization, get the current user signed in
+        and change those values to the current users'
+        parameters.
+    */
+
     const [error, setError] = useState(false);
 
     function handleOnChange(event) {
@@ -36,27 +42,8 @@ export default function SignupComponent() {
         }
     }
 
-    async function handleOnFormSubmit(event) {
-        event.preventDefault();
-        if (password !== password2) {
-            setError(true);
-            return;
-        }
-        setError(false);
-        console.log("in handle on form submit");
-        const newUser = {
-            email,
-            password,
-            password2,
-            firstName,
-            lastName,
-            phoneNumber,
-        };
-        await createUser(newUser);
-    }
-
     return (
-        <form onSubmit={(event) => handleOnFormSubmit(event)}>
+        <form>
             
             <label htmlFor="email" className="col-form-label">Email</label>
             <input 
@@ -130,4 +117,6 @@ export default function SignupComponent() {
             <button type="submit" className="btn btn-primary">Signup</button>
         </form>
     );
+
+
 }
