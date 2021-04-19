@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
   first_name         VARCHAR(255) NOT NULL,
   last_name          VARCHAR(255) NOT NULL,
   phone_number       VARCHAR(10) NOT NULL,
+  bio                VARCHAR(255) DEFAULT '',
   created_date       DATETIME DEFAULT (NOW()),
   role               VARCHAR(10) DEFAULT 'user',
   PRIMARY KEY (id)

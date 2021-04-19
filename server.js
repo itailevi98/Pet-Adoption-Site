@@ -78,13 +78,17 @@ app.post('/signup',
                         lastName, 
                         phoneNumber
                     };
-                    await addNewUser(newUser);
+                    const response = await addNewUser(newUser);
+                    if(!response) {
+                        res.status(400).send({ error: "Error creating user. Make sure it's not a duplicate email"});
+                        return;
+                    }
                     res.status(201).send({ user: { email, firstName, lastName, phoneNumber } });
                 }
             });
         } catch (err) {
-            res.status(400);
-            next(err);
+            res.status(400).send({ error: err });
+            return;
         }
     }
 );
