@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 export default function FormComponent() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -44,7 +46,6 @@ export default function FormComponent() {
 
     return (
         <form>
-            
             <label htmlFor="email" className="col-form-label">Email</label>
             <input 
                 type="email" 

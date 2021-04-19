@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { createUser } from "../../lib/api";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import { createUser } from "../../lib/userApi";
 
-export default function SignupComponent() {
+export default function SignupComponent(props) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [password2, setPassword2] = useState("");
@@ -9,6 +10,9 @@ export default function SignupComponent() {
     const [lastName, setLastName] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [error, setError] = useState(false);
+    const { setModalClose } = props;
+    const authContext = useContext(AuthContext);
+    const { login } = authContext;
 
     function handleOnChange(event) {
         const { name, value } = event.target;
@@ -43,21 +47,27 @@ export default function SignupComponent() {
             return;
         }
         setError(false);
-        console.log("in handle on form submit");
         const newUser = {
             email,
             password,
-            password2,
             firstName,
             lastName,
             phoneNumber,
         };
-        await createUser(newUser);
+        try {
+            await createUser(newUser);
+            const loginUser = { email, password };
+            login(loginUser);
+            setModalClose();
+        }
+        catch (err) {
+            console.log(err);
+        }
     }
 
     return (
         <form onSubmit={(event) => handleOnFormSubmit(event)}>
-            
+
             <label htmlFor="email" className="col-form-label">Email</label>
             <input 
                 type="email" 
@@ -124,6 +134,7 @@ export default function SignupComponent() {
                 name="phone"
                 onChange={(event) => handleOnChange(event)}
                 value={phoneNumber}
+                placeholder="Format: xxxxxxxxxx"
                 required
             />
 
