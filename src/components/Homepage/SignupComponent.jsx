@@ -9,7 +9,8 @@ export default function SignupComponent(props) {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [error, setError] = useState(false);
+    const [passwordError, setPasswordError] = useState(false);
+    const [signupError, setSignupError] = useState(false);
     const { setModalClose } = props;
     const authContext = useContext(AuthContext);
     const { login } = authContext;
@@ -43,10 +44,10 @@ export default function SignupComponent(props) {
     async function handleOnFormSubmit(event) {
         event.preventDefault();
         if (password !== password2) {
-            setError(true);
+            setPasswordError(true);
             return;
         }
-        setError(false);
+        setPasswordError(false);
         const newUser = {
             email,
             password,
@@ -61,13 +62,15 @@ export default function SignupComponent(props) {
             setModalClose();
         }
         catch (err) {
-            console.log(err);
+            setSignupError(true);
         }
     }
 
     return (
         <form onSubmit={(event) => handleOnFormSubmit(event)}>
-
+            {signupError && <div className="alert alert-danger" role="alert">
+                Signup Error: Make sure all the fields are correct and the email is not already in use!
+            </div>}
             <label htmlFor="email" className="col-form-label">Email</label>
             <input 
                 type="email" 
@@ -100,7 +103,7 @@ export default function SignupComponent(props) {
                 value={password2}
                 required
             />
-            {error && <div className="alert alert-danger" role="alert">
+            {passwordError && <div className="alert alert-danger" role="alert">
                 Make sure that the passwords match!!
             </div>}
 

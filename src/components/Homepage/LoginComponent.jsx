@@ -29,12 +29,9 @@ export default function LoginComponent(props) {
             email, 
             password,
         };
-        try{
-            login(user);
-            setModalClose();
-        } catch (err) {
-            setError(true);
-        }
+        const success = await login(user);
+        if(!success) setError(true);
+        else setModalClose();
     }
 
     return (

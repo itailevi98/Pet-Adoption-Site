@@ -7,7 +7,6 @@ import localforage from "localforage";
 
 export default function App() {
     const [user, setUser] = useState(null);
-
     async function login(user) {
         try{
             const token = await verifyUserLogin(user);
@@ -17,18 +16,15 @@ export default function App() {
                 const user = await getUserById(id);
                 setUser(user);
             }
+            return true;
         } catch (err) {
-            console.log(err);
+            return false;
         }
     }
 
     async function logout() {
-        try{
-            await localforage.setItem("token", null);
-            setUser(null);
-        } catch (err) {
-            console.log(err);
-        }
+        await localforage.setItem("token", null);
+        setUser(null);
     }
 
     useEffect(() => {
@@ -41,7 +37,7 @@ export default function App() {
                     setUser(user);
                 }
             } catch (err) {
-                console.log(err);
+                await localforage.setItem("token", null);
             }
         }
         getUser();

@@ -16,3 +16,8 @@ export async function getUserById(id) {
     const response = await axios.get(`${BaseUrl}/user/${id}`);
     return response.data.user;
 }
+
+export async function updateUser(user) {
+    const response = await axios.put(`${BaseUrl}/user/${user.id}`, user);
+    return response.data.user;
+}

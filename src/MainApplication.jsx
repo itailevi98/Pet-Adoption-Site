@@ -2,15 +2,20 @@ import "./App.css";
 import { 
     BrowserRouter as Router, 
     Route, 
-    Switch } from "react-router-dom";
+    Switch,
+    Redirect } from "react-router-dom";
 import Homepage from "./pages/Homepage";
 import SearchPage from "./pages/SearchPage";
 import ProfilePage from "./pages/ProfilePage";
 import MyPetsPage from "./pages/MyPetsPage";
 import PetPage from "./pages/PetPage";
+import { useContext } from "react";
+import { AuthContext } from "./context/AuthContext";
 
 
 export default function MainApplication() {
+    const authContext = useContext(AuthContext);
+    const { user } = authContext;
     return (
         <div>
             <Router>
@@ -22,13 +27,13 @@ export default function MainApplication() {
                         <SearchPage />
                     </Route>
                     <Route exact path="/my-pets">
-                        <MyPetsPage />
+                        {!user ? <Redirect to="/"/>  : <MyPetsPage />}
                     </Route>
                     <Route exact path="/profile">
-                        <ProfilePage />
+                        {!user ? <Redirect to="/"/>  : <ProfilePage />}
                     </Route>
                     <Route exact path="/pets/:id">
-                        <PetPage />
+                        {!user ? <Redirect to="/"/>  : <PetPage />}
                     </Route>
                 </Switch>
             </Router>
