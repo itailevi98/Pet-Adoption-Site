@@ -1,7 +1,7 @@
 const Ajv = require('ajv');
 const ajv = new Ajv();
 
-function getSignupValidationMiddleware(schema) {
+function getUserValidationMiddleware(schema) {
   const validate = ajv.compile(schema);
   return (req, res, next) => {
     const valid = validate(req.body);
@@ -13,5 +13,4 @@ function getSignupValidationMiddleware(schema) {
     }
   }
 }
-
-module.exports = getSignupValidationMiddleware;
+module.exports = getUserValidationMiddleware;

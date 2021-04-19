@@ -19,10 +19,16 @@
   },
   "homepage": "https://github.com/israeltechchallenge/pet-adoption-backend-itailevi98#readme",
   "dependencies": {
+    "@nearform/sql": "^1.5.1",
     "ajv": "^8.0.5",
+    "base64url": "^3.0.1",
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "fluent-json-schema": "^2.0.4",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.2.5",
+    "postgrator": "^4.1.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
