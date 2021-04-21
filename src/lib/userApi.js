@@ -2,6 +2,14 @@ import axios from "axios";
 
 const BaseUrl = 'http://localhost:5050';
 
+function getAuthConfig(token) {
+    return {
+        headers: {
+            Authorization: 'Bearer ' + token,
+        }
+    };
+}
+
 export async function createUser(newUser) {
     const response = await axios.post(`${BaseUrl}/signup`, newUser);
     return response.data.user;
@@ -17,7 +25,11 @@ export async function getUserById(id) {
     return response.data.user;
 }
 
-export async function updateUser(user) {
-    const response = await axios.put(`${BaseUrl}/user/${user.id}`, user);
+export async function updateUser(user, token) {
+    const response = await axios.put(
+        `${BaseUrl}/user/${user.id}`, 
+        user,
+        getAuthConfig(token)
+    );
     return response.data.user;
 }

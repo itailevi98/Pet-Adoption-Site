@@ -6,21 +6,17 @@ import { getPetById } from "../lib/petsApi";
 function PetPage() {
     const [pet, setPet] = useState({});
     const location = useLocation();
-    const id = location.pathname.slice(6);
-
-    async function fetchPet() {
-        try {
-            const petResponse = await getPetById(id);
-            if (petResponse) setPet(petResponse);
-
-        } catch (err) {
-            console.log(err);
-        }
-    }
-
+    
     useEffect(() => {
-        fetchPet();
-    }, []);
+        async function getPet() {
+            const id = location.pathname.slice(6);
+            const response = await getPetById(id);
+            if (response) {
+                setPet(response);
+            }
+        }  
+        getPet();
+    }, [location])
 
 
     // {
@@ -43,6 +39,7 @@ function PetPage() {
             <div className="d-flex flex-column">
                 <img src={pet.picture} alt="Pet"/>
                 <h3>{pet.name}</h3>
+                <h3>{pet.type}</h3>
             </div>
         </div>
         

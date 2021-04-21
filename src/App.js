@@ -1,55 +1,70 @@
 import "./App.css";
-import { AuthContext } from "./context/AuthContext";
-import MainApplication from "./MainApplication";
-import { verifyUserLogin, getUserById } from "./lib/userApi";
-import { useEffect, useState } from "react";
-import localforage from "localforage";
+import AuthProvider, { useAuth } from "./context/AuthContext";
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Redirect
+} from "react-router-dom";
+import Homepage from "./pages/Homepage";
+import SearchPage from "./pages/SearchPage";
+import MyPetsPage from "./pages/MyPetsPage";
+import ProfilePage from "./pages/ProfilePage";
+import PetPage from "./pages/PetPage";
+
+function PrivateRoute({ children, ...rest }) {
+    let auth = useAuth();
+    return (
+      <Route
+        {...rest}
+        render={({ location }) =>
+          auth.user ? (
+            children
+          ) : (
+            <Redirect
+              to={{
+                pathname: "/",
+                state: { from: location }
+              }}
+            />
+          )
+        }
+      />
+    );
+  }
+
+function AppRouter() {
+    const { isInitiallyLoaded } = useAuth();
+    if (!isInitiallyLoaded) {
+        return <div></div>;
+    }
+    return (
+        <Router>
+            <Switch>
+                <Route exact path="/">
+                    <Homepage />
+                </Route>
+                <Route exact path="/search">
+                    <SearchPage />
+                </Route>
+                <PrivateRoute exact path="/my-pets">
+                    <MyPetsPage />
+                </PrivateRoute>
+                <PrivateRoute exact path="/profile">
+                    <ProfilePage />
+                </PrivateRoute>
+                <PrivateRoute exact path="/pets/:id">
+                    <PetPage />
+                </PrivateRoute>
+            </Switch>
+        </Router>
+    )
+}
 
 export default function App() {
-    const [user, setUser] = useState(null);
-    async function login(user) {
-        try{
-            const token = await verifyUserLogin(user);
-            if (token) {
-                await localforage.setItem("token", token);
-                const id = token.split(".")[1];
-                const user = await getUserById(id);
-                setUser(user);
-            }
-            return true;
-        } catch (err) {
-            return false;
-        }
-    }
-
-    async function logout() {
-        await localforage.setItem("token", null);
-        setUser(null);
-    }
-
-    useEffect(() => {
-        async function getUser() {
-            try {
-                const token = await localforage.getItem("token");
-                if (token) {
-                    const id = token.split(".")[1];
-                    const user = await getUserById(id);
-                    setUser(user);
-                }
-            } catch (err) {
-                await localforage.setItem("token", null);
-            }
-        }
-        getUser();
-    }, []);
-
     return (
-        <AuthContext.Provider value={{
-            user,
-            login,
-            logout
-        }}>
-            <MainApplication />
-        </AuthContext.Provider>
+        <AuthProvider>
+            <AppRouter />
+        </AuthProvider>
     );
 }

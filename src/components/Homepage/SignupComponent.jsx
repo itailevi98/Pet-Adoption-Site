@@ -1,5 +1,5 @@
-import { useContext, useState } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 import { createUser } from "../../lib/userApi";
 
 export default function SignupComponent(props) {
@@ -12,34 +12,7 @@ export default function SignupComponent(props) {
     const [passwordError, setPasswordError] = useState(false);
     const [signupError, setSignupError] = useState(false);
     const { setModalClose } = props;
-    const authContext = useContext(AuthContext);
-    const { login } = authContext;
-
-    function handleOnChange(event) {
-        const { name, value } = event.target;
-        switch (name) {
-            case "email":
-                setEmail(value);
-                break;
-            case "password":
-                setPassword(value);
-                break;
-            case "password2":
-                setPassword2(value);
-                break;
-            case "firstName":
-                setFirstName(value);
-                break;
-            case "lastName":
-                setLastName(value);
-                break;
-            case "phone":
-                setPhoneNumber(value);
-                break;
-            default:
-                break;
-        }
-    }
+    const { login } = useAuth();
 
     async function handleOnFormSubmit(event) {
         event.preventDefault();
@@ -67,7 +40,7 @@ export default function SignupComponent(props) {
     }
 
     return (
-        <form onSubmit={(event) => handleOnFormSubmit(event)}>
+        <form className="p-2 m-2 d-flex flex-column justify-content-center" onSubmit={(event) => handleOnFormSubmit(event)}>
             {signupError && <div className="alert alert-danger" role="alert">
                 Signup Error: Make sure all the fields are correct and the email is not already in use!
             </div>}
@@ -77,7 +50,7 @@ export default function SignupComponent(props) {
                 className="form-control" 
                 id="email" 
                 name="email"
-                onChange={(event) => handleOnChange(event)}
+                onChange={(event) => setEmail(event.target.value)}
                 value={email}
                 required
             />
@@ -88,7 +61,7 @@ export default function SignupComponent(props) {
                 className="form-control" 
                 id="password" 
                 name="password"
-                onChange={(event) => handleOnChange(event)}
+                onChange={(event) => setPassword(event.target.value)}
                 value={password}
                 required
             />
@@ -99,7 +72,7 @@ export default function SignupComponent(props) {
                 className="form-control" 
                 id="password2" 
                 name="password2"
-                onChange={(event) => handleOnChange(event)}
+                onChange={(event) => setPassword2(event.target.value)}
                 value={password2}
                 required
             />
@@ -113,7 +86,7 @@ export default function SignupComponent(props) {
                 className="form-control" 
                 id="firstName" 
                 name="firstName"
-                onChange={(event) => handleOnChange(event)}
+                onChange={(event) => setFirstName(event.target.value)}
                 value={firstName}
                 required
             />
@@ -124,7 +97,7 @@ export default function SignupComponent(props) {
                 className="form-control" 
                 id="lastName" 
                 name="lastName"
-                onChange={(event) => handleOnChange(event)}
+                onChange={(event) => setLastName(event.target.value)}
                 value={lastName}
                 required
             />
@@ -135,13 +108,13 @@ export default function SignupComponent(props) {
                 className="form-control" 
                 id="phone" 
                 name="phone"
-                onChange={(event) => handleOnChange(event)}
+                onChange={(event) => setPhoneNumber(event.target.value)}
                 value={phoneNumber}
                 placeholder="Format: xxxxxxxxxx"
                 required
             />
 
-            <button type="submit" className="btn btn-primary">Signup</button>
+            <button type="submit" className="btn btn-primary mt-2 w-50 mx-auto">Signup</button>
         </form>
     );
 }

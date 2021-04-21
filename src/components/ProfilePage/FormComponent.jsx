@@ -1,11 +1,11 @@
-import { useContext, useState } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 import localforage from "localforage";
 import { updateUser } from "../../lib/userApi";
+import { useHistory, withRouter } from "react-router-dom";
 
-export default function FormComponent() {
-    const authContext = useContext(AuthContext);
-    const { user } = authContext;
+function FormComponent() {
+    const { user } = useAuth();
     const { first_name, last_name, phone_number } = user;
     const [email, setEmail] = useState(user.email);
     const [password, setPassword] = useState("");
@@ -14,44 +14,18 @@ export default function FormComponent() {
     const [lastName, setLastName] = useState(last_name);
     const [phoneNumber, setPhoneNumber] = useState(phone_number);
     const [bio, setBio] = useState(user.bio ? user.bio : "");
-
+    const [success, setSuccess] = useState(false);
     const [error, setError] = useState(false);
-
-    function handleOnChange(event) {
-        const { name, value } = event.target;
-        switch (name) {
-            case "email":
-                setEmail(value);
-                break;
-            case "password":
-                setPassword(value);
-                break;
-            case "password2":
-                setPassword2(value);
-                break;
-            case "firstName":
-                setFirstName(value);
-                break;
-            case "lastName":
-                setLastName(value);
-                break;
-            case "phone":
-                setPhoneNumber(value);
-                break;
-            case "bio":
-                setBio(value);
-                break;
-            default:
-                break;
-        }
-    }
+    const [passwordsError, setPasswordsError] = useState(false);
+    const history = useHistory();
 
     async function handleOnSubmit(event) {
         event.preventDefault();
         if (password !== password2) {
-            setError(true);
+            setPasswordsError(true);
             return;
         }
+        setPasswordsError(false);
         setError(false);
         try{
             const token = await localforage.getItem("token");
@@ -78,22 +52,41 @@ export default function FormComponent() {
                     bio,
                 };
             }
-            await updateUser(updatedUser);
-            alert("Profile has been updated");
+            await updateUser(updatedUser, token);
+            setSuccess(true);
+            setTimeout(() => {
+                history.go(0);
+            }, 3000)
+            
         } catch (err) {
-            alert("Error updating profile");
+            setError(true);
         }
     }
 
     return (
-        <form onSubmit={(event) => handleOnSubmit(event)}>
+        <form className="p-2 m-2 d-flex flex-column justify-content-center" onSubmit={(event) => handleOnSubmit(event)}>
+            {success && 
+                <div class="alert alert-success" role="alert">
+                    Profile updated. Page will reload soon.
+                </div>
+            }
+            {error && 
+                <div class="alert alert-danger" role="alert">
+                    <p>Error updating profile:</p>
+                    <ul>
+                        <li>Do not change to an already existing username</li>
+                        <li>Make sure the passwords are equal (if you are changing your password)</li>
+                        <li>Make sure all the fields are in the correct format</li>
+                    </ul>
+                </div>
+            } 
             <label htmlFor="email" className="col-form-label">Email</label>
             <input 
                 type="email" 
                 className="form-control" 
                 id="email" 
                 name="email"
-                onChange={(event) => handleOnChange(event)}
+                onChange={(event) => setEmail(event.target.value)}
                 value={email}
                 required
             />
@@ -104,7 +97,7 @@ export default function FormComponent() {
                 className="form-control" 
                 id="password" 
                 name="password"
-                onChange={(event) => handleOnChange(event)}
+                onChange={(event) => setPassword(event.target.value)}
                 value={password}
                 placeholder="Enter password only if you want to change your current password"
             />
@@ -115,11 +108,11 @@ export default function FormComponent() {
                 className="form-control" 
                 id="password2" 
                 name="password2"
-                onChange={(event) => handleOnChange(event)}
+                onChange={(event) => setPassword2(event.target.value)}
                 value={password2}
                 placeholder="Passwords must match"
             />
-            {error && <div className="alert alert-danger" role="alert">
+            {passwordsError && <div className="alert alert-danger" role="alert">
                 Make sure that the passwords match!!
             </div>}
 
@@ -129,7 +122,7 @@ export default function FormComponent() {
                 className="form-control" 
                 id="firstName" 
                 name="firstName"
-                onChange={(event) => handleOnChange(event)}
+                onChange={(event) => setFirstName(event.target.value)}
                 value={firstName}
                 required
             />
@@ -140,7 +133,7 @@ export default function FormComponent() {
                 className="form-control" 
                 id="lastName" 
                 name="lastName"
-                onChange={(event) => handleOnChange(event)}
+                onChange={(event) => setLastName(event.target.value)}
                 value={lastName}
                 required
             />
@@ -151,7 +144,7 @@ export default function FormComponent() {
                 className="form-control" 
                 id="phone" 
                 name="phone"
-                onChange={(event) => handleOnChange(event)}
+                onChange={(event) => setPhoneNumber(event.target.value)}
                 value={phoneNumber}
                 required
             />
@@ -162,11 +155,13 @@ export default function FormComponent() {
                 className="form-control" 
                 id="bio" 
                 name="bio"
-                onChange={(event) => handleOnChange(event)}
+                onChange={(event) => setBio(event.target.value)}
                 value={bio}
             />
 
-            <button type="submit" className="btn btn-primary">Update Profile</button>
+            <button type="submit" className="btn btn-primary mt-2 w-50 mx-auto">Update Profile</button>
         </form>
     );
 }
+
+export default withRouter(FormComponent);

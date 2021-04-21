@@ -5,16 +5,15 @@ import Modal from "react-modal";
 import LoginComponent from "../components/Homepage/LoginComponent";
 import SignupComponent from "../components/Homepage/SignupComponent";
 import NavbarComponent from "../components/NavbarComponent/NavbarComponent";
-import { useContext, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 Modal.setAppElement('#root');
 
 function Homepage() {
     const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
     const [signupModalIsOpen, setSignupModalIsOpen] = useState(false);
-    const authContext = useContext(AuthContext);
-    const { user } = authContext;
+    const { user } = useAuth();
 
     function setLoginModalClose() {
         setLoginModalIsOpen(false);

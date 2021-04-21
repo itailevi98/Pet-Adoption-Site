@@ -1,27 +1,12 @@
-import { useContext, useState } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 export default function LoginComponent(props) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(false);
     const { setModalClose } = props;
-    const authContext = useContext(AuthContext);
-    const { login } = authContext;
-
-    function handleOnChange(event) {
-        const { name, value } = event.target;
-        switch (name) {
-            case "email":
-                setEmail(value);
-                break;
-            case "password":
-                setPassword(value);
-                break;
-            default:
-                break;
-        }
-    }
+    const { login } = useAuth();
 
     async function handleOnFormSubmit(event) {
         event.preventDefault();
@@ -35,7 +20,7 @@ export default function LoginComponent(props) {
     }
 
     return (
-        <form onSubmit={(event) => handleOnFormSubmit(event)}>
+        <form className="p-2 m-2 d-flex flex-column justify-content-center" onSubmit={(event) => handleOnFormSubmit(event)}>
             <label htmlFor="email" className="col-sm-2 col-form-label">
                 Email
             </label>
@@ -44,7 +29,7 @@ export default function LoginComponent(props) {
                 className="form-control" 
                 id="email" 
                 name="email"
-                onChange={(event) => handleOnChange(event)}
+                onChange={(event) => setEmail(event.target.value)}
                 value={email}
                 required />
 
@@ -57,16 +42,14 @@ export default function LoginComponent(props) {
                 id="password"
                 name="password"
                 required
-                onChange={(event) => handleOnChange(event)}
+                onChange={(event) => setPassword(event.target.value)}
                 value={password}
             />
             {error && <div className="alert alert-danger" role="alert">
                 Username or Password is incorrect. Enter the correct information.
             </div>}
 
-            <button type="submit" className="btn btn-primary">
-                Login
-            </button>
+            <button type="submit" className="btn btn-primary mt-2 w-50 mx-auto">Login</button>
         </form>
     );
 }

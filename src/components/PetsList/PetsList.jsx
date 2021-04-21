@@ -1,12 +1,12 @@
 import CardComponent from "./CardComponent";
 
-export default function MyPetsList(props) {
-    const { myPets } = props;
+export default function PetsList(props) {
+    const { pets } = props;
     return (
         <div className="mt-3 d-flex">
-            {myPets.map((pet) =>
+            {pets.map((pet) =>
                 <CardComponent
-                    key={pet.id}
+                    key={pet.pet_id}
                     pet={pet}
                 />
             )}

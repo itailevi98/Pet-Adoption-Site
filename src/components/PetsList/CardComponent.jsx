@@ -4,12 +4,12 @@ import './cardComponentStyles.css';
 function CardComponent(props) {
     const { pet } = props;
     const { 
-        id,
+        pet_id,
         name, 
         adoptionStatus,
         picture
     } = pet;
-    const linkName = `/pets/${id}`;
+    const linkName = `/pets/${pet_id}`;
 
     return ( 
         <div className="card-container d-flex flex-column p-4 m-3">
