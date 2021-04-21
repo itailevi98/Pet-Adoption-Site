@@ -1,47 +1,42 @@
 const express = require('express');
-const { AddPetSchema } = require("../data/pets/addPetSchema");
+const { AddPetSchema } = require('../data/pets/addPetSchema');
+const { addNewPet, getPetsFromSearch, getPetById } = require('../data/pets/pets');
 const postPetValidationSchema = require("../middlewares/petValidation");
-const { addNewPet, readPets } = require("../data/pets/pets");
 
 const router = express.Router();
 
-router.get('/', async (req, res, next) => {
-    try {
-        const pets = await readPets();
-        res.status(201).send({ pets: pets });
-    } catch (err) {
-        next(err);
-    }
-});
-
-router.post('/',
-    postPetValidationSchema(AddPetSchema),
-    (req, res, next) => {
-    try {
-        const newPet = req.body;
-        addNewPet(newPet);
-        res.status(201).send({ pet: newPet});
-    } catch (err) {
-        res.status(400);
-        next(err);
-    }
-});
-
-router.get('/:id', async (req, res, next) => {
-    try {
-        const pets = await readPets();
-        const id = req.params.id;
-        for(const pet of pets) {
-            if (pet.id === id) {
-                res.status(201).send({ pet: pet });
-                return;
-            }
+router.post("/", 
+    postPetValidationSchema(AddPetSchema), 
+    async (req, res) => {
+        const pet = req.body;
+        const added = await addNewPet(pet);
+        if (added) {
+            res.status(201).send({ pet: pet });
+            return;
         }
-        res.status(400).send({text: "Pet does not exist in db"});
+        res.status(400).send({ error: "Error creating pet. Make sure all the fields are correct" });
+});
+
+router.get("/", async (req, res, next) => {
+    try {  
+        const query = req.query;
+        if ("basicSearchQuery" in query) {
+            const results = await getPetsFromSearch(query);
+            res.status(200).send({ results: results });
+        }
     } catch (err) {
-        res.status(400);
-        next(err);
+        res.status(400).send({ error: err });
     }
 });
+
+router.get("/:id", async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const pet = await getPetById(id);
+        res.status(200).send({ pet: pet });
+    } catch (err) {
+        res.status(400).send({ error: err });
+    }
+})
 
 module.exports = router;

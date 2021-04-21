@@ -1,6 +1,7 @@
 const express = require('express');
 const { getUserById, updateUser } = require("../data/users/users");
 const base64url = require("base64url");
+const { auth } = require("../middlewares/auth");
 
 const router = express.Router();
 
@@ -29,8 +30,9 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
-router.put('/:id', async (req, res, next) => {
-    try{
+router.put('/:id', auth, async (req, res, next) => {
+    try { 
+        console.log(req.user);
         const { id } = req.params;
         const dec = JSON.parse(base64url.default.decode(id));
         //dec.id is actual id

@@ -1,3 +1,10 @@
+const path = require("path");
+const result = require("dotenv").config({
+    path: path.join(__dirname, `./.env.${process.env.NODE_ENV}`),
+});
+if (result.error) {
+    throw new Error(result.error);
+}
 const express = require("express");
 const cors = require("cors");
 const { NewUserValidateSchema } = require("./data/users/userSignupSchema");
@@ -17,8 +24,8 @@ app.use(express.json());
 app.use('/pet', petsRouter);
 app.use('/user', userRouter);
 
-const port = "5050";
-const host = "0.0.0.0";
+const port = process.env.PORT;
+const host = process.env.HOST;
 
 postgrator.migrate().then((result) => {
     console.log(`migrated db successfully:`, result);
@@ -45,7 +52,7 @@ app.post('/login',
             if (err) next(err);
             else {
                 if (result) {
-                    const token = jwt.sign({ id: user.id }, `gUkXp2s5v8y/A?D(G+KbPeShVmYq3t6w`);
+                    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
                     res.send({
                         token, 
                         user: {

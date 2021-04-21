@@ -16,7 +16,7 @@ const AddPetSchema = S.object()
     .prop('color', S.string().required())
     .prop('bio', S.string())
     .prop('hypoallergenic', S.boolean().required())
-    .prop('dietaryRestrictions', S.string().default("").required())
-    .prop('breed', S.string())
+    .prop('dietaryRestrictions', S.string().default("none"))
+    .prop('breed', S.string().required())
     .valueOf();
 exports.AddPetSchema = AddPetSchema;

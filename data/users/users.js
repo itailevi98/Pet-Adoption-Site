@@ -3,7 +3,7 @@ const SQL = require('@nearform/sql');
 
 async function addNewUser(newUser) {
     const { email, hash, firstName, lastName, phoneNumber } = newUser;
-    try{
+    try {
         await query(SQL`INSERT INTO users 
         (email, password_hash, first_name, last_name, phone_number) 
         VALUES (${email}, ${hash}, ${firstName}, ${lastName}, ${phoneNumber})`);
