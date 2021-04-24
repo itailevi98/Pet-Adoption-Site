@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 export default function NavbarComponent() {
-    const { user, logout } = useAuth();
+    const { token, logout } = useAuth();
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
@@ -12,7 +12,7 @@ export default function NavbarComponent() {
                     <span className="navbar-toggler-icon"></span>
                 </button>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                    {user && 
+                    {token && 
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
                             <NavLink activeClassName="active" className="nav-link" exact to="/">Home</NavLink>
@@ -36,7 +36,7 @@ export default function NavbarComponent() {
                             </div>
                         </li>
                     </ul>}
-                    {!user && 
+                    {!token && 
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
                             <NavLink activeClassName="active" className="nav-link" exact to="/">Home</NavLink>

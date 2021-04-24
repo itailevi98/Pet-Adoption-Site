@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { createUser } from "../../lib/userApi";
+import { createUser, userLogin } from "../../lib/userApi";
 
 export default function SignupComponent(props) {
     const [email, setEmail] = useState("");
@@ -13,6 +13,7 @@ export default function SignupComponent(props) {
     const [signupError, setSignupError] = useState(false);
     const { setModalClose } = props;
     const { login } = useAuth();
+    
 
     async function handleOnFormSubmit(event) {
         event.preventDefault();
@@ -30,8 +31,8 @@ export default function SignupComponent(props) {
         };
         try {
             await createUser(newUser);
-            const loginUser = { email, password };
-            login(loginUser);
+            const token = await userLogin(email, password);
+            login(token);
             setModalClose();
         }
         catch (err) {

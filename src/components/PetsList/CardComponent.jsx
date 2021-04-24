@@ -6,7 +6,7 @@ function CardComponent(props) {
     const { 
         pet_id,
         name, 
-        adoptionStatus,
+        adoption_status,
         picture
     } = pet;
     const linkName = `/pets/${pet_id}`;
@@ -15,7 +15,7 @@ function CardComponent(props) {
         <div className="card-container d-flex flex-column p-4 m-3">
             <img src={picture} alt="Pet"/>
             <h3>{name}</h3>
-            <h4>{adoptionStatus}</h4>
+            <h4>{adoption_status}</h4>
             <Link to={linkName}>See more</Link>
         </div>
     );

@@ -1,19 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import localforage from "localforage";
-import { updateUser } from "../../lib/userApi";
+import { updateUser, getUserById } from "../../lib/userApi";
 import { useHistory, withRouter } from "react-router-dom";
 
 function FormComponent() {
-    const { user } = useAuth();
-    const { first_name, last_name, phone_number } = user;
-    const [email, setEmail] = useState(user.email);
+    const { token } = useAuth();
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [password2, setPassword2] = useState("");
-    const [firstName, setFirstName] = useState(first_name);
-    const [lastName, setLastName] = useState(last_name);
-    const [phoneNumber, setPhoneNumber] = useState(phone_number);
-    const [bio, setBio] = useState(user.bio ? user.bio : "");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [bio, setBio] = useState("");
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(false);
     const [passwordsError, setPasswordsError] = useState(false);
@@ -62,6 +61,21 @@ function FormComponent() {
             setError(true);
         }
     }
+
+    useEffect(() => {
+        async function getUser() {
+            if (token) {
+                const user = await getUserById(token);
+                const { email, first_name, last_name, phone_number, bio } = user;
+                setEmail(email);
+                setFirstName(first_name);
+                setLastName(last_name);
+                setPhoneNumber(phone_number);
+                setBio(bio);
+            }
+        }
+        getUser();
+    }, [token]);
 
     return (
         <form className="p-2 m-2 d-flex flex-column justify-content-center" onSubmit={(event) => handleOnSubmit(event)}>

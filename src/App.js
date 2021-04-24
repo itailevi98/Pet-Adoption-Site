@@ -4,7 +4,7 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Redirect
+    Redirect,
 } from "react-router-dom";
 import Homepage from "./pages/Homepage";
 import SearchPage from "./pages/SearchPage";
@@ -13,25 +13,25 @@ import ProfilePage from "./pages/ProfilePage";
 import PetPage from "./pages/PetPage";
 
 function PrivateRoute({ children, ...rest }) {
-    let auth = useAuth();
+    const { token } = useAuth();
     return (
-      <Route
-        {...rest}
-        render={({ location }) =>
-          auth.user ? (
-            children
-          ) : (
-            <Redirect
-              to={{
-                pathname: "/",
-                state: { from: location }
-              }}
-            />
-          )
-        }
-      />
+        <Route
+            {...rest}
+            render={({ location }) =>
+                token ? (
+                    children
+                ) : (
+                    <Redirect
+                        to={{
+                            pathname: "/",
+                            state: { from: location },
+                        }}
+                    />
+                )
+            }
+        />
     );
-  }
+}
 
 function AppRouter() {
     const { isInitiallyLoaded } = useAuth();
@@ -47,18 +47,18 @@ function AppRouter() {
                 <Route exact path="/search">
                     <SearchPage />
                 </Route>
+                <Route exact path="/pets/:id">
+                    <PetPage />
+                </Route>
                 <PrivateRoute exact path="/my-pets">
                     <MyPetsPage />
                 </PrivateRoute>
                 <PrivateRoute exact path="/profile">
                     <ProfilePage />
                 </PrivateRoute>
-                <PrivateRoute exact path="/pets/:id">
-                    <PetPage />
-                </PrivateRoute>
             </Switch>
         </Router>
-    )
+    );
 }
 
 export default function App() {

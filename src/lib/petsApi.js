@@ -2,6 +2,14 @@ import axios from "axios";
 
 const BaseUrl = 'http://localhost:5050';
 
+function getAuthConfig(token) {
+    return {
+        headers: {
+            Authorization: 'Bearer ' + token,
+        }
+    };
+}
+
 export async function searchPets(query) {
     const response = await axios.get(`${BaseUrl}/pet`, { 
         params: query
@@ -12,4 +20,24 @@ export async function searchPets(query) {
 export async function getPetById(id) {
     const response = await axios.get(`${BaseUrl}/pet/${id}`);
     return response.data.pet;
+}
+
+export async function savePet(petId, token) {
+    const response = await axios.post(`${BaseUrl}/pet/${petId}/save`, token, getAuthConfig(token));
+    return response.data;
+}
+
+export async function deleteSavedPet(petId, token) {
+    const response = await axios.delete(`${BaseUrl}/pet/${petId}/save`, getAuthConfig(token));
+    return response.data;
+}
+
+export async function adoptPet(petId, statusType, token) {
+    const response = await axios.post(`${BaseUrl}/pet/${petId}/adopt`, { statusType: statusType }, getAuthConfig(token));
+    return response.data;
+}
+
+export async function returnPet(petId, token) {
+    const response = await axios.post(`${BaseUrl}/pet/${petId}/return`, token, getAuthConfig(token));
+    return response.data;
 }

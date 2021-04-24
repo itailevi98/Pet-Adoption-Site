@@ -6,10 +6,10 @@ import { useHistory, useLocation, withRouter } from "react-router";
 
 function SearchPage() {
     const [basicSearchQuery, setBasicSearchQuery] = useState("");
+    const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false);
     const [fosteredStatus, setFosteredStatus] = useState(false);
     const [adoptedStatus, setAdoptedStatus] = useState(false);
     const [availableStatus, setAvailableStatus] = useState(false);
-    const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false);
     const [animalType, setAnimalType] = useState("");
     const [petName, setPetName] = useState("");
     const [height, setHeight] = useState(0);
@@ -18,18 +18,9 @@ function SearchPage() {
     const history = useHistory();
     const location = useLocation();
 
-    async function getResultsFromQuery(query) {
-        const searchResults = await searchPets(query);
-        setPets(searchResults);
-    }
-
     async function handleOnFormSubmit(event) {
         event.preventDefault();
         if (!advancedSearchOpen) {
-            // call api call to search with basicSearchQuery
-            // get all rows in response
-                // if empty return all pets
-            // display all returned pets in card components
             const query = {
                 basicSearchQuery
             };
@@ -51,22 +42,43 @@ function SearchPage() {
                 weight
             };
             const searchResults = await searchPets(query);
+            setPets(searchResults);
+            let historySearchParams = "";
+            for (const key in query) {
+                if (query[key]) {
+                    historySearchParams += `${key}=${query[key]}&`;
+                }
+            }
+            if (historySearchParams.slice(-1) === "&") historySearchParams = historySearchParams.slice(0, -1);
+            history.push({
+                pathname:"/search",
+                search: historySearchParams
+            });
         }
     }
 
-    useEffect(() => {
-        if (location.search) {
-            const search = location.search.slice(1);
-            const query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
-            if (Object.keys(query).length === 1){
-                getResultsFromQuery({
-                    basicSearchQuery: query.type,
-                });
-                setBasicSearchQuery(query.type);
-            }
-        }
+    // useEffect(() => {
+    //     if (location.search) {
+    //         const search = location.search.slice(1);
+    //         const query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+    //         if (Object.keys(query).length === 1 && "animalType" in query){
+    //             setBasicSearchQuery(query.animalType);
+    //         }
+    //         else {
+    //             console.log(query);
+    //             console.log("fosteredStatus" in query);
+    //             if ("fosteredStatus" in query) setFosteredStatus(true);
+    //             if ("adoptedStatus" in query) setAdoptedStatus(true);
+    //             if ("availableStatus" in query) setAvailableStatus(true);
+    //             if ("animalType" in query) setAnimalType(query.animalType);
+    //             if ("height" in query) setHeight(query.height);
+    //             if ("weight" in query) setWeight(query.weight);
+    //             if ("petName" in query) setPetName(query.petName);
+    //             setAdvancedSearchOpen(true);
+    //         }
+    //     }
         
-    }, [location]);
+    // }, [location]);
 
     return (
         <div>
@@ -101,7 +113,7 @@ function SearchPage() {
                     {!advancedSearchOpen && "Use Advanced Search"}
                     {advancedSearchOpen && "Use Basic Search"}
                 </button>
-                <div className="collapse container" id="collapseExample">
+                <div className={advancedSearchOpen ? "collapse container show" : "collapse container"} id="collapseExample">
                     <div className="row mt-2 mb-3">
                         <div className="col d-flex flex-column align-items-center">
                             <h4>Adoption Status</h4>
@@ -193,7 +205,7 @@ function SearchPage() {
                     </div>
                     <div className="row mb-3">
                         <div className="col">
-                            <label htmlFor="height">Height (in kg):</label>
+                            <label htmlFor="height">Height (in m):</label>
                             <input
                                 className="form-control"
                                 type="number"

@@ -15,13 +15,13 @@ export async function createUser(newUser) {
     return response.data.user;
 }
 
-export async function verifyUserLogin(user) {
-    const response = await axios.post(`${BaseUrl}/login`, user);
+export async function userLogin(email, password) {
+    const response = await axios.post(`${BaseUrl}/login`, { email, password });
     return response.data.token;
 }
 
 export async function getUserById(id) {
-    const response = await axios.get(`${BaseUrl}/user/${id}`);
+    const response = await axios.get(`${BaseUrl}/user/${id}`, getAuthConfig(id));
     return response.data.user;
 }
 

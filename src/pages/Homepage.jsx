@@ -13,7 +13,7 @@ Modal.setAppElement('#root');
 function Homepage() {
     const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
     const [signupModalIsOpen, setSignupModalIsOpen] = useState(false);
-    const { user } = useAuth();
+    const { token } = useAuth();
 
     function setLoginModalClose() {
         setLoginModalIsOpen(false);
@@ -26,7 +26,7 @@ function Homepage() {
     return (
         <div>
             <NavbarComponent />
-            {!user && 
+            {!token && 
             <div className="d-flex flex-column">
                 <HeaderComponent />
                 <TextComponent />
@@ -46,7 +46,7 @@ function Homepage() {
                     <SignupComponent setModalClose={() => setSignupModalClose()}/>
                 </Modal>
             </div>}
-            {user && 
+            {token && 
             <div className="d-flex flex-column">
                 <HeaderComponent />
             </div>}

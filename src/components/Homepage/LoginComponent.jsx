@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { userLogin } from "../../lib/userApi";
 
 export default function LoginComponent(props) {
     const [email, setEmail] = useState("");
@@ -10,13 +11,14 @@ export default function LoginComponent(props) {
 
     async function handleOnFormSubmit(event) {
         event.preventDefault();
-        const user = {
-            email, 
-            password,
-        };
-        const success = await login(user);
-        if(!success) setError(true);
-        else setModalClose();
+        const token = await userLogin(email, password);
+        if (token) {
+            login(token);
+            setModalClose();
+        }
+        else {
+            setError(true);
+        }
     }
 
     return (

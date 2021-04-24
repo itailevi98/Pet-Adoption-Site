@@ -1,10 +1,9 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import localforage from "localforage";
-import { verifyUserLogin, getUserById } from "../lib/userApi";
 
 export const AuthContext = createContext({
-    user: null,
-    login: (user) => {},
+    token: null,
+    login: (token) => {},
     logout: () => {},
     isInitiallyLoaded: false,
 });
@@ -15,47 +14,31 @@ export const useAuth = () => {
 
 function AuthProvider(props) {
     const [isInitiallyLoaded, setIsInitiallyLoaded] = useState(false);
-    const [user, setUser] = useState(null);
-    async function login(user) {
-        try {
-            const token = await verifyUserLogin(user);
-            if (token) {
-                await localforage.setItem("token", token);
-                const id = token.split(".")[1];
-                const dbUser = await getUserById(id);
-                setUser(dbUser);
-            }
-            return true;
-        } catch (err) {
-            return false;
-        }
+    const [token, setToken] = useState(null);
+    async function login(token) {
+        setToken(token);
+        await localforage.setItem("token", token);
     }
 
     async function logout() {
+        setToken(null);
         await localforage.removeItem("token");
-        setUser(null);
     }
 
     useEffect(() => {
-        async function getUser() {
-            try {
-                const token = await localforage.getItem("token");
-                if (token) {
-                    const id = token.split(".")[1];
-                    const user = await getUserById(id);
-                    setUser(user);
-                }
-                setIsInitiallyLoaded(true);
-            } catch (err) {
-                await localforage.setItem("token", null);
+        async function getToken() {
+            const token = await localforage.getItem("token");
+            if (token) {
+                setToken(token);
             }
+            setIsInitiallyLoaded(true);
         }
-        getUser();
+        getToken();
     }, []);
 
     return (
         <AuthContext.Provider value={{
-            user, 
+            token, 
             login,
             logout,
             isInitiallyLoaded
