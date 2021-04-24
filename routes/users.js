@@ -5,24 +5,16 @@ const { auth } = require("../middlewares/auth");
 
 const router = express.Router();
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', auth, async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const dec = JSON.parse(base64url.default.decode(id));
-        const user = await getUserById(dec.id);
-        if (!user) {
+        const userId = req.user.id;
+        if (!userId) {
             res.status(404).send("Unable to find a user with that ID");
             return;
         }
-        const { email, first_name, last_name, phone_number, bio } = user;
+        const user = await getUserById(userId);
         res.status(200).send({ 
-            user: {
-                email,
-                first_name,
-                last_name,
-                phone_number, 
-                bio,
-            }
+            user: user
         });
     } catch (err) {
         res.status(400);
@@ -32,11 +24,7 @@ router.get('/:id', async (req, res, next) => {
 
 router.put('/:id', auth, async (req, res, next) => {
     try { 
-        console.log(req.user);
-        const { id } = req.params;
-        const dec = JSON.parse(base64url.default.decode(id));
-        //dec.id is actual id
-        const newId = dec.id;
+        const id = req.user.id;
         const user = req.body;
         const { email, firstName, lastName, phoneNumber, bio } = user;
         let passwordBool;
@@ -46,7 +34,7 @@ router.put('/:id', auth, async (req, res, next) => {
                 if (err) next(err);
                 else {
                     const newUser = {
-                        id: newId, 
+                        id, 
                         email, 
                         hash, 
                         firstName, 
@@ -62,7 +50,7 @@ router.put('/:id', auth, async (req, res, next) => {
         }
         else {
             const newUser = {
-                id: newId,
+                id,
                 email,
                 firstName,
                 lastName,

@@ -21,7 +21,7 @@ async function getUserByEmail(email) {
 exports.getUserByEmail = getUserByEmail;
 
 async function getUserById(id) {
-    const rows = await query(SQL`SELECT * FROM users WHERE id=${id}`);
+    const rows = await query(SQL`SELECT id, email, first_name, last_name, phone_number, bio, role FROM users WHERE id=${id}`);
     return rows[0];
 }
 exports.getUserById = getUserById;

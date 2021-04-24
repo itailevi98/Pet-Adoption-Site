@@ -1,9 +1,14 @@
 const express = require('express');
 const { AddPetSchema } = require('../data/pets/addPetSchema');
-const { addNewPet, getPetsFromSearch, getPetById } = require('../data/pets/pets');
+const { addNewPet, getPetsFromSearch, getPetById, getPetWithUserId, savePet, deleteSavedPet, adoptPet, returnPet } = require('../data/pets/pets');
 const postPetValidationSchema = require("../middlewares/petValidation");
+const userPetsRouter = require("./userPets");
+const { auth } = require("../middlewares/auth");
+const { resetErrorsCount } = require('ajv/dist/compile/errors');
 
 const router = express.Router();
+
+router.use("/user", userPetsRouter);
 
 router.post("/", 
     postPetValidationSchema(AddPetSchema), 
@@ -20,11 +25,10 @@ router.post("/",
 router.get("/", async (req, res, next) => {
     try {  
         const query = req.query;
-        if ("basicSearchQuery" in query) {
-            const results = await getPetsFromSearch(query);
-            res.status(200).send({ results: results });
-        }
+        const results = await getPetsFromSearch(query);
+        res.status(200).send({ results: results });
     } catch (err) {
+        console.log(err);
         res.status(400).send({ error: err });
     }
 });
@@ -37,6 +41,57 @@ router.get("/:id", async (req, res, next) => {
     } catch (err) {
         res.status(400).send({ error: err });
     }
-})
+});
+
+router.post("/:id/save", auth, async (req, res, next) => {
+    try {
+        const petId = req.params.id;
+        const userId = req.user.id;
+        const userPet = await getPetWithUserId(petId, userId);
+        await savePet(petId, userId, userPet !== undefined);
+        res.status(200).send({ message: "Pet Saved" });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ error: err });
+    }
+});
+
+router.delete("/:id/save", auth, async (req, res, next) => {
+    try {
+        const petId = req.params.id;
+        const userId = req.user.id;
+        await deleteSavedPet(petId, userId);
+        res.status(200).send({ message: "Pet unsaved" });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ error: err });
+    }
+});
+
+router.post("/:id/adopt", auth, async (req, res, next) => {
+    try {
+        const petId = req.params.id;
+        const userId = req.user.id;
+        const { statusType } = req.body;
+        const userPet = await getPetWithUserId(petId, userId);
+        await adoptPet(petId, userId, statusType, userPet !== undefined);
+        res.status(200).send({ message: `Pet ${statusType}ed` });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ error: err });
+    }
+});
+
+router.post("/:id/return", auth, async (req, res, next) => {
+    try { 
+        const petId = req.params.id;
+        const userId = req.user.id;
+        await returnPet(petId, userId);
+        res.status(200).send({ message: `Pet removed and set to available` });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ error: err });
+    }
+});
 
 module.exports = router;
