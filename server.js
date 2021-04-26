@@ -6,6 +6,8 @@ if (result.error) {
     throw new Error(result.error);
 }
 const express = require("express");
+const multer = require("multer");
+const fs = require("fs");
 const cors = require("cors");
 const { NewUserValidateSchema } = require("./data/users/userSignupSchema");
 const { UserLoginValidateSchema } = require("./data/users/userLoginSchema");
@@ -16,11 +18,14 @@ const userRouter = require("./routes/users");
 const { postgrator } = require("./lib/db");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { uploadedFilesFolderName } = require('./middlewares/multipart');
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/" + uploadedFilesFolderName, express.static(uploadedFilesFolderName));
 app.use('/pet', petsRouter);
 app.use('/user', userRouter);
 

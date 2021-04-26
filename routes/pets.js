@@ -1,19 +1,35 @@
 const express = require('express');
 const { AddPetSchema } = require('../data/pets/addPetSchema');
-const { addNewPet, getPetsFromSearch, getPetById, getPetWithUserId, savePet, deleteSavedPet, adoptPet, returnPet } = require('../data/pets/pets');
+const { addNewPet, getPetsFromSearch, getPetById, getPetWithUserId, savePet, deleteSavedPet, adoptPet, returnPet, updatePet } = require('../data/pets/pets');
 const postPetValidationSchema = require("../middlewares/petValidation");
 const userPetsRouter = require("./userPets");
 const { auth } = require("../middlewares/auth");
-const { resetErrorsCount } = require('ajv/dist/compile/errors');
+const { upload } = require('../middlewares/multipart');
+const { uploadToCloudinary } = require('../lib/cloudinary');
+const fs = require("fs");
 
 const router = express.Router();
 
 router.use("/user", userPetsRouter);
 
-router.post("/", 
-    postPetValidationSchema(AddPetSchema), 
+router.post("/",
+    upload.single('petPicture'),
+    (req, res, next) => {
+        //change the types to the corresponding types
+        req.body['hypoallergenic'] = true ? req.body.hypoallergenic === "true" : false;
+        const height = parseInt(req.body['height']);
+        req.body['height'] = height;
+        const weight = parseInt(req.body['weight']);
+        req.body['weight'] = weight;
+        next();
+    }, 
+    postPetValidationSchema(AddPetSchema),
     async (req, res) => {
         const pet = req.body;
+        const result = await uploadToCloudinary(req.file.path);
+        fs.unlinkSync(req.file.path);
+        const fileUrl = result.secure_url;
+        pet["picture"] = fileUrl;
         const added = await addNewPet(pet);
         if (added) {
             res.status(201).send({ pet: pet });
@@ -22,14 +38,48 @@ router.post("/",
         res.status(400).send({ error: "Error creating pet. Make sure all the fields are correct" });
 });
 
+router.put("/:id", 
+    upload.single('petPicture'),
+    (req, res, next) => {
+        //change the types to the corresponding types
+        req.body['hypoallergenic'] = true ? req.body.hypoallergenic === "true" : false;
+        const height = parseInt(req.body['height']);
+        req.body['height'] = height;
+        const weight = parseInt(req.body['weight']);
+        req.body['weight'] = weight;
+        next();
+    }, 
+    postPetValidationSchema(AddPetSchema),
+    async (req, res, next) => {
+        const { id } = req.params;
+        const pet = req.body;
+        if (pet.petPicture) {
+            const url = pet.petPicture[1];
+            delete pet.petPicture;
+            pet["picture"] = url;
+        }
+        else {
+            const result = await uploadToCloudinary(req.file.path);
+            fs.unlinkSync(req.file.path);
+            const fileUrl = result.secure_url;
+            pet["picture"] = fileUrl;
+        }
+        try{
+            await updatePet(pet, id);
+            res.status(200).send({ message: "Pet updated" });
+        } catch (err) {
+            next(err);
+        }
+    }
+);
+
 router.get("/", async (req, res, next) => {
     try {  
         const query = req.query;
         const results = await getPetsFromSearch(query);
         res.status(200).send({ results: results });
     } catch (err) {
-        console.log(err);
-        res.status(400).send({ error: err });
+        next(err);
     }
 });
 
@@ -39,7 +89,7 @@ router.get("/:id", async (req, res, next) => {
         const pet = await getPetById(id);
         res.status(200).send({ pet: pet });
     } catch (err) {
-        res.status(400).send({ error: err });
+        next(err);
     }
 });
 
@@ -51,8 +101,7 @@ router.post("/:id/save", auth, async (req, res, next) => {
         await savePet(petId, userId, userPet !== undefined);
         res.status(200).send({ message: "Pet Saved" });
     } catch (err) {
-        console.log(err);
-        res.status(500).send({ error: err });
+        next(err);
     }
 });
 
@@ -63,8 +112,7 @@ router.delete("/:id/save", auth, async (req, res, next) => {
         await deleteSavedPet(petId, userId);
         res.status(200).send({ message: "Pet unsaved" });
     } catch (err) {
-        console.log(err);
-        res.status(500).send({ error: err });
+        next(err);
     }
 });
 
@@ -77,8 +125,7 @@ router.post("/:id/adopt", auth, async (req, res, next) => {
         await adoptPet(petId, userId, statusType, userPet !== undefined);
         res.status(200).send({ message: `Pet ${statusType}ed` });
     } catch (err) {
-        console.log(err);
-        res.status(500).send({ error: err });
+        next(err);
     }
 });
 
@@ -89,8 +136,7 @@ router.post("/:id/return", auth, async (req, res, next) => {
         await returnPet(petId, userId);
         res.status(200).send({ message: `Pet removed and set to available` });
     } catch (err) {
-        console.log(err);
-        res.status(500).send({ error: err });
+        next(err);
     }
 });
 

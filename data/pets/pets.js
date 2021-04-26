@@ -2,11 +2,11 @@ const { query } = require("../../lib/db");
 const SQL = require('@nearform/sql');
 
 async function addNewPet(pet) {
-    const { type, name, adoptionStatus, picture, height, weight, color, bio, hypoallergenic, dietaryRestrictions, breed } = pet;
+    const { type, petName, adoptionStatus, picture, height, weight, color, bio, hypoallergenic, dietaryRestrictions, breed } = pet;
     try {
         await query(SQL`INSERT INTO pets 
         (type, name, adoption_status, picture, height, weight, color, bio, hypoallergenic, dietary_restrictions, breed) 
-        VALUES (${type}, ${name}, ${adoptionStatus}, ${picture}, ${height}, ${weight}, ${color}, ${bio}, ${hypoallergenic}, ${dietaryRestrictions}, ${breed})`);
+        VALUES (${type}, ${petName}, ${adoptionStatus}, ${picture}, ${height}, ${weight}, ${color}, ${bio}, ${hypoallergenic}, ${dietaryRestrictions}, ${breed})`);
         return true;
     } catch (err){
         return false;
@@ -21,7 +21,6 @@ async function getPetsFromSearch(searchQuery) {
     }
 
     if (Object.keys(searchQuery).length > 1) {
-        // statuses need to be changed not great like that
         let queryString = SQL`SELECT * FROM pets WHERE `;
         if (searchQuery.adoptedStatus === "true") queryString.append(SQL`(adoption_status='ADOPTED'`);
 
@@ -71,7 +70,7 @@ async function getPetsFromSearch(searchQuery) {
         return rows;
     }
     else {
-        if (searchQuery.basicSearchQuery === "") {
+        if (searchQuery.basicSearchQuery === "" || Object.keys(searchQuery).length === 0) {
             const rows = await query(SQL`SELECT * FROM pets`);
             return rows;
         }
@@ -119,3 +118,22 @@ async function returnPet(pet_id, user_id) {
     await query(SQL`UPDATE pets SET adoption_status='AVAILABLE' WHERE pet_id=${pet_id}`);
 }
 exports.returnPet = returnPet;
+
+async function updatePet(pet, pet_id) {
+    const { type, petName, adoptionStatus, picture, height, weight, color, bio, hypoallergenic, dietaryRestrictions, breed } = pet;
+    console.log(pet);
+    await query(SQL`UPDATE pets SET
+        type=${type}, 
+        name=${petName}, 
+        adoption_status=${adoptionStatus}, 
+        picture=${picture}, 
+        height=${height}, 
+        weight=${weight}, 
+        color=${color}, 
+        bio=${bio}, 
+        hypoallergenic=${hypoallergenic}, 
+        dietary_restrictions=${dietaryRestrictions}, 
+        breed=${breed}
+        WHERE pet_id=${pet_id}`);
+}
+exports.updatePet = updatePet;

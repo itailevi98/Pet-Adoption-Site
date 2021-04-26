@@ -21,7 +21,7 @@ async function getUserByEmail(email) {
 exports.getUserByEmail = getUserByEmail;
 
 async function getUserById(id) {
-    const rows = await query(SQL`SELECT id, email, first_name, last_name, phone_number, bio, role FROM users WHERE id=${id}`);
+    const rows = await query(SQL`SELECT id, email, first_name, last_name, phone_number, created_date, bio, role FROM users WHERE id=${id}`);
     return rows[0];
 }
 exports.getUserById = getUserById;
@@ -37,3 +37,17 @@ async function updateUser(user, passwordBool) {
     }
 }
 exports.updateUser = updateUser;
+
+async function getUsers() {
+    const rows = await query(SQL`SELECT id, email, first_name, last_name FROM users`);
+    return rows;
+}
+exports.getUsers = getUsers;
+
+async function getFullUserById(id) {
+    const userRow = await query(SQL`SELECT id, email, first_name, last_name, phone_number, created_date, bio, role FROM users WHERE id=${id}`);
+    const user = userRow[0];
+    const petsRows = await query(SQL`SELECT pet_id FROM user_pets WHERE user_id=${id} AND owned=TRUE`);
+    return { user, petsRows };
+}
+exports.getFullUserById = getFullUserById;

@@ -1,5 +1,5 @@
 const express = require('express');
-const { getUserById, updateUser } = require("../data/users/users");
+const { getUserById, updateUser, getUsers, getFullUserById } = require("../data/users/users");
 const base64url = require("base64url");
 const { auth } = require("../middlewares/auth");
 
@@ -17,7 +17,6 @@ router.get('/:id', auth, async (req, res, next) => {
             user: user
         });
     } catch (err) {
-        res.status(400);
         next(err);
     }
 });
@@ -62,10 +61,41 @@ router.put('/:id', auth, async (req, res, next) => {
         }
        
     } catch (err) {
-        //provide error status and message
         next(err);
     }
     
+});
+
+router.get('/', async (req, res, next) => {
+    try {
+        const users = await getUsers();
+        res.status(200).send({ users: users });
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.get('/:id/full', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { user, petsRows } = await getFullUserById(id);
+        if (user) {
+            if (petsRows.length === 0) res.status(200).send({ 
+                user: user,
+                userPets: null
+            });
+            else res.status(200).send({
+                user: user,
+                userPets: petsRows,
+            });
+        }
+        else {
+            res.status(404).send({ error: "User not found with that ID" });
+            return;
+        }
+    } catch (err) {
+        next(err);
+    }
 });
 
 module.exports = router;
