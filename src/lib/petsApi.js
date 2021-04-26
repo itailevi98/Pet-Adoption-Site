@@ -41,3 +41,14 @@ export async function returnPet(petId, token) {
     const response = await axios.post(`${BaseUrl}/pet/${petId}/return`, token, getAuthConfig(token));
     return response.data;
 }
+
+export async function addPet(formData, token) {
+    const response = await axios.post(`${BaseUrl}/pet`, formData, getAuthConfig(token));
+    return response.data.pet;
+}
+
+export async function editPet(formData, petId) {
+    const response = await axios.put(`${BaseUrl}/pet/${petId}`, formData);
+    return response.data;
+}
+

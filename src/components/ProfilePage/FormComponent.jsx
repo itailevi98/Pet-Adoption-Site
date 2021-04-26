@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import localforage from "localforage";
 import { updateUser, getUserById } from "../../lib/userApi";
 import { useHistory, withRouter } from "react-router-dom";
 
@@ -27,12 +26,9 @@ function FormComponent() {
         setPasswordsError(false);
         setError(false);
         try{
-            const token = await localforage.getItem("token");
-            const id = token.split(".")[1];
             let updatedUser;
             if (password) {
                 updatedUser = {
-                    id,
                     email,
                     password,
                     firstName,
@@ -43,7 +39,6 @@ function FormComponent() {
             }
             else {
                 updatedUser = {
-                    id,
                     email,
                     firstName,
                     lastName,
@@ -63,7 +58,7 @@ function FormComponent() {
     }
 
     useEffect(() => {
-        async function getUser() {
+        async function fetchUser() {
             if (token) {
                 const user = await getUserById(token);
                 const { email, first_name, last_name, phone_number, bio } = user;
@@ -74,7 +69,7 @@ function FormComponent() {
                 setBio(bio);
             }
         }
-        getUser();
+        fetchUser();
     }, [token]);
 
     return (

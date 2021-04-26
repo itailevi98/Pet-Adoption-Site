@@ -1,8 +1,29 @@
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { getUserById } from "../../lib/userApi";
 
 export default function NavbarComponent() {
     const { token, logout } = useAuth();
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        async function fetchUser() {
+            try { 
+                if (token) {
+                    const user = await getUserById(token);
+                    if (user) {
+                        if (user.role === "admin") {
+                            setIsAdmin(true);
+                        }
+                    }
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        fetchUser();
+    }, [token]);
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
@@ -35,6 +56,12 @@ export default function NavbarComponent() {
                                 Logout
                             </div>
                         </li>
+                        {isAdmin && <li className="nav-item">
+                            <NavLink activeClassName="active" className="nav-link" exact to="/admin">Admin Dashboard</NavLink>
+                        </li>}
+                        {isAdmin && <li className="nav-item">
+                            <NavLink activeClassName="active" className="nav-link" exact to="/admin/pet/add">Add Pet</NavLink>
+                        </li>}
                     </ul>}
                     {!token && 
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">

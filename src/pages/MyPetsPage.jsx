@@ -14,7 +14,6 @@ export default function MyPetsPage() {
     const { token } = useAuth();
 
     useEffect(() => {
-
         async function getUsersPets() {
             const userPets = await getPetsByUser(token);
             if (userPets) {
@@ -29,14 +28,9 @@ export default function MyPetsPage() {
                 setSavedPets(userSavedPets);
                 setOwnedPets(userOwnedPets);
             }
-        } 
-
-        getUsersPets(); 
-
-        return () => {
-
         }
 
+        getUsersPets();
     }, [token]);
 
     return (
@@ -46,32 +40,57 @@ export default function MyPetsPage() {
                 <h1>These are all the pets you have saved</h1>
                 <div>
                     <div className="form-check">
-                        <input onChange={() => {
-                            setDisplayOwnedPets(true);
-                            setDisplaySavedPets(false);
-                        }} className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked={displayOwnedPets}/>
-                        <label className="form-check-label" htmlFor="flexRadioDefault1">
+                        <input
+                            onChange={() => {
+                                setDisplayOwnedPets(true);
+                                setDisplaySavedPets(false);
+                            }}
+                            className="form-check-input"
+                            type="radio"
+                            name="flexRadioDefault"
+                            id="flexRadioDefault1"
+                            checked={displayOwnedPets}
+                        />
+                        <label
+                            className="form-check-label"
+                            htmlFor="flexRadioDefault1"
+                        >
                             Display Owned Pets
                         </label>
                     </div>
                     <div className="form-check">
-                        <input onChange={() => {
-                            setDisplaySavedPets(true);
-                            setDisplayOwnedPets(false);
-                        }}  className="form-check-input" type="radio" name="savedPets" id="savedPets" checked={displaySavedPets}/>
+                        <input
+                            onChange={() => {
+                                setDisplaySavedPets(true);
+                                setDisplayOwnedPets(false);
+                            }}
+                            className="form-check-input"
+                            type="radio"
+                            name="savedPets"
+                            id="savedPets"
+                            checked={displaySavedPets}
+                        />
                         <label className="form-check-label" htmlFor="savedPets">
                             Display Saved Pets
                         </label>
                     </div>
-                </div> 
-                { displayOwnedPets && ownedPets.length > 0 && <div>
-                    <PetsList pets={ownedPets}/>
-                </div>}
-                { displayOwnedPets && ownedPets.length === 0 && <NoPetsTextComponent /> }
-                { displaySavedPets && savedPets.length > 0 && <div>
-                    <PetsList pets={savedPets}/>
-                </div>}
-                { displaySavedPets && savedPets.length === 0 && <div>No saved pets</div> }
+                </div>
+                {displayOwnedPets && ownedPets.length > 0 && (
+                    <div>
+                        <PetsList pets={ownedPets} />
+                    </div>
+                )}
+                {displayOwnedPets && ownedPets.length === 0 && (
+                    <NoPetsTextComponent />
+                )}
+                {displaySavedPets && savedPets.length > 0 && (
+                    <div>
+                        <PetsList pets={savedPets} />
+                    </div>
+                )}
+                {displaySavedPets && savedPets.length === 0 && (
+                    <div>No saved pets</div>
+                )}
             </div>
         </div>
     );
