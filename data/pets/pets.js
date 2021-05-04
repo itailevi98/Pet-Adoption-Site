@@ -20,64 +20,61 @@ async function getPetsFromSearch(searchQuery) {
         return "%" + key + "%";
     }
 
-    if (Object.keys(searchQuery).length > 1) {
-        let queryString = SQL`SELECT * FROM pets WHERE `;
-        if (searchQuery.adoptedStatus === "true") queryString.append(SQL`(adoption_status='ADOPTED'`);
-
-        if (searchQuery.fosteredStatus === "true") {
-            if (searchQuery.adoptedStatus === "false") queryString.append(SQL`(adoption_status='FOSTERED'`);
-            else queryString.append(SQL` OR adoption_status='FOSTERED'`);
-        }
-
-        if (searchQuery.availableStatus === "true") {
-            if (searchQuery.adoptedStatus === "false" && searchQuery.fosteredStatus === "false")
-                queryString.append(SQL`(adoption_status='AVAILABLE'`);
-            else queryString.append(SQL` OR adoption_status='AVAILABLE'`);
-        }
-
-        if (searchQuery.adoptedStatus === "true" || searchQuery.fosteredStatus === "true" || searchQuery.availableStatus === "true"){
-            queryString.append(SQL`)`);
-        }
-
-        if (searchQuery.height !== "0"){
-            if (queryString.text.slice(-5) === "WHERE") queryString.append(SQL`height=${searchQuery.height}`);
-            else queryString.append(SQL` AND height=${searchQuery.height}`);
-        }
-
-        if (searchQuery.weight !== "0"){
-            if (queryString.text.slice(-5) === "WHERE") queryString.append(SQL`weight=${searchQuery.weight}`);
-            else queryString.append(SQL` AND weight=${searchQuery.weight}`);
-        }
-
-        if (searchQuery.petName !== "") {
-            if (queryString.text.slice(-5) === "WHERE") 
-                queryString.append(SQL`name LIKE ${createLikeQuery(searchQuery.petName)}`);
-            else queryString.append(SQL` AND name LIKE ${createLikeQuery(searchQuery.petName)}`);
-        }
-
-        if (searchQuery.animalType !== "") {
-            if (queryString.text.slice(-5) === "WHERE") 
-                queryString.append(SQL`type LIKE ${createLikeQuery(searchQuery.animalType)}`);
-            else queryString.append(SQL` AND type LIKE ${createLikeQuery(searchQuery.animalType)}`);
-        }
-
-        if (queryString.text.slice(-5) === "WHERE") {
-            const rows = await query(SQL`SELECT * FROM pets`);
-            return rows;
-        }
-
-        const rows = await query(queryString);
+    if (Object.keys(searchQuery).length === 0) {
+        const rows = await query(SQL`SELECT * FROM pets`);
         return rows;
     }
-    else {
-        if (searchQuery.basicSearchQuery === "" || Object.keys(searchQuery).length === 0) {
-            const rows = await query(SQL`SELECT * FROM pets`);
-            return rows;
-        }
-        const type = "%" + searchQuery.basicSearchQuery + "%";
-        const rows = await query(SQL`SELECT * FROM pets WHERE type LIKE ${type}`);
+
+    let queryString = SQL`SELECT * FROM pets WHERE `;
+
+    if (searchQuery.basicSearchQuery) queryString.append(SQL`type LIKE ${createLikeQuery(searchQuery.basicSearchQuery)}`);
+
+    if (searchQuery.adoptedStatus === "true") queryString.append(SQL`(adoption_status='ADOPTED'`);
+
+    if (searchQuery.fosteredStatus === "true") {
+        if (searchQuery.adoptedStatus === "false" || !searchQuery.adoptedStatus) queryString.append(SQL`(adoption_status='FOSTERED'`);
+        else queryString.append(SQL` OR adoption_status='FOSTERED'`);
+    }
+
+    if (searchQuery.availableStatus === "true") {
+        if ((searchQuery.adoptedStatus === "false" || !searchQuery.adoptedStatus) && (searchQuery.fosteredStatus === "false" || !searchQuery.fosteredStatus))
+            queryString.append(SQL`(adoption_status='AVAILABLE'`);
+        else queryString.append(SQL` OR adoption_status='AVAILABLE'`);
+    }
+
+    if (searchQuery.adoptedStatus === "true" || searchQuery.fosteredStatus === "true" || searchQuery.availableStatus === "true"){
+        queryString.append(SQL`)`);
+    }
+
+    if (searchQuery.height){
+        if (queryString.text.slice(-5) === "WHERE") queryString.append(SQL`height=${searchQuery.height}`);
+        else queryString.append(SQL` AND height=${searchQuery.height}`);
+    }
+
+    if (searchQuery.weight){
+        if (queryString.text.slice(-5) === "WHERE") queryString.append(SQL`weight=${searchQuery.weight}`);
+        else queryString.append(SQL` AND weight=${searchQuery.weight}`);
+    }
+
+    if (searchQuery.petName) {
+        if (queryString.text.slice(-5) === "WHERE") 
+            queryString.append(SQL`name LIKE ${createLikeQuery(searchQuery.petName)}`);
+        else queryString.append(SQL` AND name LIKE ${createLikeQuery(searchQuery.petName)}`);
+    }
+
+    if (searchQuery.animalType) {
+        if (queryString.text.slice(-5) === "WHERE") 
+            queryString.append(SQL`type LIKE ${createLikeQuery(searchQuery.animalType)}`);
+        else queryString.append(SQL` AND type LIKE ${createLikeQuery(searchQuery.animalType)}`);
+    }
+
+    if (queryString.text.slice(-5) === "WHERE") {
+        const rows = await query(SQL`SELECT * FROM pets`);
         return rows;
     }
+
+    const rows = await query(queryString);
+    return rows;
 }
 exports.getPetsFromSearch = getPetsFromSearch;
 

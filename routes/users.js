@@ -1,7 +1,7 @@
 const express = require('express');
 const { getUserById, updateUser, getUsers, getFullUserById } = require("../data/users/users");
-const base64url = require("base64url");
 const { auth } = require("../middlewares/auth");
+const bcrypt = require('bcrypt');
 
 const router = express.Router();
 

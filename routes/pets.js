@@ -17,9 +17,9 @@ router.post("/",
     (req, res, next) => {
         //change the types to the corresponding types
         req.body['hypoallergenic'] = true ? req.body.hypoallergenic === "true" : false;
-        const height = parseInt(req.body['height']);
+        const height = parseFloat(req.body['height']);
         req.body['height'] = height;
-        const weight = parseInt(req.body['weight']);
+        const weight = parseFloat(req.body['weight']);
         req.body['weight'] = weight;
         next();
     }, 
@@ -43,9 +43,9 @@ router.put("/:id",
     (req, res, next) => {
         //change the types to the corresponding types
         req.body['hypoallergenic'] = true ? req.body.hypoallergenic === "true" : false;
-        const height = parseInt(req.body['height']);
+        const height = parseFloat(req.body['height']);
         req.body['height'] = height;
-        const weight = parseInt(req.body['weight']);
+        const weight = parseFloat(req.body['weight']);
         req.body['weight'] = weight;
         next();
     }, 

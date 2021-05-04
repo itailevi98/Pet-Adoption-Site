@@ -6,8 +6,6 @@ if (result.error) {
     throw new Error(result.error);
 }
 const express = require("express");
-const multer = require("multer");
-const fs = require("fs");
 const cors = require("cors");
 const { NewUserValidateSchema } = require("./data/users/userSignupSchema");
 const { UserLoginValidateSchema } = require("./data/users/userLoginSchema");
@@ -50,7 +48,7 @@ app.post('/login',
         const { email, password } = req.body;
         const user = await getUserByEmail(email);
         if (!user) {
-            res.status(404).send('User not found with this email');
+            res.status(404).send({ error: "Username does not exist" });
             return;
         }
         bcrypt.compare(password, user.password_hash, (err, result) => {
@@ -58,7 +56,7 @@ app.post('/login',
             else {
                 if (result) {
                     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
-                    res.send({
+                    res.status(200).send({
                         token, 
                         user: {
                             id: user.id,
@@ -68,7 +66,7 @@ app.post('/login',
                     });
                 }
                 else {
-                    res.status(400).send('Incorrect password');
+                    res.status(403).send({ error: "Incorrect password" });
                 }
             }
         });
@@ -99,8 +97,7 @@ app.post('/signup',
                 }
             });
         } catch (err) {
-            res.status(400).send({ error: err });
-            return;
+            next(err);
         }
     }
 );
