@@ -4,7 +4,7 @@ import { updateUser, getUserById } from "../../lib/userApi";
 import { useHistory, withRouter } from "react-router-dom";
 
 function FormComponent() {
-    const { token } = useAuth();
+    const { token, login } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [password2, setPassword2] = useState("");
@@ -48,9 +48,10 @@ function FormComponent() {
             }
             await updateUser(updatedUser, token);
             setSuccess(true);
+            login(token);
             setTimeout(() => {
                 history.go(0);
-            }, 3000)
+            }, 3000);
             
         } catch (err) {
             setError(true);
@@ -74,13 +75,8 @@ function FormComponent() {
 
     return (
         <form className="p-2 m-2 d-flex flex-column justify-content-center" onSubmit={(event) => handleOnSubmit(event)}>
-            {success && 
-                <div class="alert alert-success" role="alert">
-                    Profile updated. Page will reload soon.
-                </div>
-            }
             {error && 
-                <div class="alert alert-danger" role="alert">
+                <div className="alert alert-danger mt-3 mb-3" role="alert">
                     <p>Error updating profile:</p>
                     <ul>
                         <li>Do not change to an already existing username</li>
@@ -121,8 +117,8 @@ function FormComponent() {
                 value={password2}
                 placeholder="Passwords must match"
             />
-            {passwordsError && <div className="alert alert-danger" role="alert">
-                Make sure that the passwords match!!
+            {passwordsError && <div className="alert alert-danger mt-3 mb-3" role="alert">
+                Make sure that the passwords match!
             </div>}
 
             <label htmlFor="firstName" className="col-form-label">First Name</label>
@@ -169,6 +165,11 @@ function FormComponent() {
             />
 
             <button type="submit" className="btn btn-primary mt-2 w-50 mx-auto">Update Profile</button>
+            {success && 
+                <div className="alert alert-success mt-3" role="alert">
+                    Profile updated. Page will reload soon.
+                </div>
+            }
         </form>
     );
 }

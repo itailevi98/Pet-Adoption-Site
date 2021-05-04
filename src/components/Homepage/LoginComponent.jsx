@@ -5,24 +5,44 @@ import { userLogin } from "../../lib/userApi";
 export default function LoginComponent(props) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState(false);
+    const [userNameError, setUserNameError] = useState(false);
+    const [passwordError, setPasswordError] = useState(false);
+    const [serverError, setServerError] = useState(false);
     const { setModalClose } = props;
     const { login } = useAuth();
 
     async function handleOnFormSubmit(event) {
         event.preventDefault();
-        const token = await userLogin(email, password);
-        if (token) {
-            login(token);
-            setModalClose();
+        try {
+            setUserNameError(false);
+            setPasswordError(false);
+            setServerError(false);
+            const token = await userLogin(email, password);
+            if (token) {
+                login(token);
+                setModalClose();
+            }
+            else {
+                setServerError(true);
+            }
+        } catch (err) {
+            if (err.response.data.error === "Username does not exist") {
+                setUserNameError(true);
+            }
+            else if (err.response.data.error === "Incorrect password") {
+                setPasswordError(true);
+            }
+            else {
+                setServerError(true);
+            }
+            
         }
-        else {
-            setError(true);
-        }
+        
     }
 
     return (
-        <form className="p-2 m-2 d-flex flex-column justify-content-center" onSubmit={(event) => handleOnFormSubmit(event)}>
+        <form className="p-2 m-2 d-flex flex-column" onSubmit={(event) => handleOnFormSubmit(event)}>
+            <h2 className="text-center">Login</h2>
             <label htmlFor="email" className="col-sm-2 col-form-label">
                 Email
             </label>
@@ -47,8 +67,14 @@ export default function LoginComponent(props) {
                 onChange={(event) => setPassword(event.target.value)}
                 value={password}
             />
-            {error && <div className="alert alert-danger" role="alert">
-                Username or Password is incorrect. Enter the correct information.
+            {userNameError && <div className="alert alert-danger mt-3" role="alert">
+                Username does not exist. Please enter a valid username.
+            </div>}
+            {passwordError && <div className="alert alert-danger mt-3" role="alert">
+                Incorrect password. Please enter the correct password.
+            </div>}
+            {serverError && <div className="alert alert-danger mt-3" role="alert">
+                Server Error. Please try again later.
             </div>}
 
             <button type="submit" className="btn btn-primary mt-2 w-50 mx-auto">Login</button>

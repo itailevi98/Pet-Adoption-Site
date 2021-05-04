@@ -2,10 +2,10 @@ import "./App.css";
 import AuthProvider, { useAuth } from "./context/AuthContext";
 import {
     BrowserRouter as Router,
-    Switch,
     Route,
-    Redirect,
+    Redirect
 } from "react-router-dom";
+import { AnimatedSwitch } from 'react-router-transition';
 import Homepage from "./pages/Homepage";
 import SearchPage from "./pages/SearchPage";
 import MyPetsPage from "./pages/MyPetsPage";
@@ -14,6 +14,7 @@ import PetPage from "./pages/PetPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminAddPet from "./pages/AdminAddPet";
 import AdminEditPetPage from "./pages/AdminEditPetPage";
+import NavbarComponent from "./components/NavbarComponent/NavbarComponent";
 
 function PrivateRoute({ children, ...rest }) {
     const { token } = useAuth();
@@ -37,38 +38,52 @@ function PrivateRoute({ children, ...rest }) {
 }
 
 function AppRouter() {
+    const { isInitiallyLoaded } = useAuth();
+
+    if (!isInitiallyLoaded) {
+        return <div></div>;
+    }
 
     return (
-        <Router>
-            <Switch>
-                <Route exact path="/">
-                    <Homepage />
-                </Route>
-                <Route exact path="/search">
-                    <SearchPage />
-                </Route>
-                <Route exact path="/pets/:id">
-                    <PetPage />
-                </Route>
-                <Route exact path="/admin">
-                    <AdminDashboard />
-                </Route>
-                <Route exact path="/admin/pet/add">
-                    <AdminAddPet />
-                </Route>
-                <Route exact path="/admin/pet/:id">
-                    <AdminEditPetPage />
-                </Route>
-                <PrivateRoute exact path="/my-pets">
-                    <MyPetsPage />
-                </PrivateRoute>
-                <PrivateRoute exact path="/profile">
-                    <ProfilePage />
-                </PrivateRoute>
-            </Switch>
-        </Router>
+        <div>
+            
+            <Router>
+                <NavbarComponent />
+                <AnimatedSwitch
+                atEnter={{ opacity: 0 }}
+                atLeave={{ opacity: 0 }}
+                atActive={{ opacity: 1 }}
+                className="switch-wrapper"
+                >
+                    <Route exact path="/">
+                        <Homepage />
+                    </Route>
+                    <Route exact path="/search">
+                        <SearchPage />
+                    </Route>
+                    <Route exact path="/pets/:id">
+                        <PetPage />
+                    </Route>
+                    <Route exact path="/admin">
+                        <AdminDashboard />
+                    </Route>
+                    <Route exact path="/admin/pet/add">
+                        <AdminAddPet />
+                    </Route>
+                    <Route exact path="/admin/pet/:id">
+                        <AdminEditPetPage />
+                    </Route>
+                    <PrivateRoute exact path="/my-pets">
+                        <MyPetsPage />
+                    </PrivateRoute>
+                    <PrivateRoute exact path="/profile">
+                        <ProfilePage />
+                    </PrivateRoute>
+                </AnimatedSwitch>
+            </Router>
+        </div>
     );
-}
+};
 
 export default function App() {
     return (

@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useHistory, withRouter } from "react-router";
 import { editPet, getPetById } from "../../../lib/petsApi";
+import styles from "./editPet.module.css";
 
 function FormComponent(props) {
     const { petId } = props;
     const [inputs, setInputs] = useState({});
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [adoptionStatus, setAdoptionStatus] = useState("");
     const [hypoallergenic, setHypoallergenic] = useState(false);
     const [petPicture, setPetPicture] = useState();
@@ -24,12 +26,20 @@ function FormComponent(props) {
             setInputs(prev);
             return;
         }
+        if (name === "type" && value === "Select an option...") {
+            if (prev.type) {
+                delete prev.type;
+                setInputs(prev);
+            }
+            return;
+        }
         prev[name] = value;
         setInputs(prev);
     }
 
     async function handleOnSubmit(event) {
         event.preventDefault();
+        setLoading(true);
         const prev = inputs;
         prev["hypoallergenic"] = hypoallergenic;
         prev["adoptionStatus"] = adoptionStatus;
@@ -42,12 +52,14 @@ function FormComponent(props) {
             await editPet(fd, petId);
             setSuccess(true);
             setError(false);
+            setLoading(false);
             setTimeout(() => {
                 history.go(0);
             }, 3000)
             
         } catch (err) {
             setError(true);
+            setLoading(false);
         }
     }
 
@@ -74,37 +86,31 @@ function FormComponent(props) {
 
     return (
         <form
-            className="p-2 m-2 d-flex flex-column justify-content-center"
+            className="container d-flex flex-column justify-content-center"
             onSubmit={(event) => handleOnSubmit(event)}
         >
-            {success && (
-                <div className="alert alert-success" role="alert">
-                    Pet has been edited
-                </div>
-            )}
-            {error && (
-                <div className="alert alert-danger" role="alert">
-                    <p>Error adding pet:</p>
-                    <ul>
-                        <li>
-                            Make sure all the fields are in the correct format
-                        </li>
-                        <li>Make sure all the required fields are filled</li>
-                    </ul>
-                </div>
-            )}
+            {inputs.petPicture && <div className={styles.imageContainer}>
+                <img className={styles.petPicture} src={inputs.petPicture} alt="Pet"/>
+            </div>}
+
             <label htmlFor="type" className="col-form-label">
                 Animal Type:
             </label>
-            <input
-                type="text"
-                className="form-control"
-                id="type"
-                name="type"
-                onChange={(event) => handleOnChange(event)}
-                value={inputs.type ? inputs.type : ""}
-                required
-            />
+            <select value={inputs.type} className="form-select" name="type" onChange={(event) => handleOnChange(event)}>
+                <option>Select an option...</option>
+                <option value="Dog">Dog</option>
+                <option value="Cat">Cat</option>
+                <option value="Parrot">Parrot</option>
+                <option value="Hamster">Hamster</option>
+                <option value="Rabbit">Rabbit</option>
+                <option value="Ferret">Ferret</option>
+                <option value="Mouse">Mouse</option>
+                <option value="Spider">Spider</option>
+                <option value="Turtle">Turtle</option>
+                <option value="Snake">Snake</option>
+                <option value="Iguana">Iguana</option>
+                <option value="Other">Other</option>
+            </select>
 
             <label htmlFor="petName" className="col-form-label">
                 Pet Name:
@@ -117,7 +123,7 @@ function FormComponent(props) {
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.petName ? inputs.petName : ""}
             />
-            <h3>Pet Status:</h3>
+            <label className="mt-3">Pet Status:</label>
             <div>
                 <div className="form-check">
                     <input
@@ -175,7 +181,6 @@ function FormComponent(props) {
                 </div>
             </div>
 
-            {inputs.petPicture && <img src={inputs.petPicture} alt="Pet"/>}
             <label htmlFor="petPicture" className="col-form-label">
                 Upload A New Picture:
             </label>
@@ -189,26 +194,28 @@ function FormComponent(props) {
             />
 
             <label htmlFor="height" className="col-form-label">
-                Height (in m):
+                Height (in m, round to the nearest hundredth):
             </label>
             <input
                 type="number"
                 className="form-control"
                 id="height"
                 name="height"
+                step=".01"
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.height ? inputs.height : ""}
                 required
             />
 
             <label htmlFor="weight" className="col-form-label">
-                Weight (in kg):
+                Weight (in kg, round to the nearest hundredth):
             </label>
             <input
                 type="number"
                 className="form-control"
                 id="weight"
                 name="weight"
+                step=".01"
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.weight ? inputs.weight : ""}
                 required
@@ -241,7 +248,7 @@ function FormComponent(props) {
             />
 
             <div>
-                <h2>Hypoallergenic:</h2>
+                <label className="mt-3">Hypoallergenic:</label>
                 <div className="form-check">
                     <input
                         onChange={() => {
@@ -306,9 +313,30 @@ function FormComponent(props) {
                 required
             />
 
-            <button type="submit" className="btn btn-primary mt-2 w-50 mx-auto">
+            <button type="submit" className="btn btn-primary mt-2 mb-3 w-50 mx-auto">
                 Update Pet
             </button>
+            {success && (
+                <div className="alert alert-success" role="alert">
+                    Pet has been edited
+                </div>
+            )}
+            {loading && <div className="d-flex justify-content-center mt-3 mb-3">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>}
+            {error && (
+                <div className="alert alert-danger" role="alert">
+                    <p>Error adding pet:</p>
+                    <ul>
+                        <li>
+                            Make sure all the fields are in the correct format
+                        </li>
+                        <li>Make sure all the required fields are filled</li>
+                    </ul>
+                </div>
+            )}
         </form>
     );
 }

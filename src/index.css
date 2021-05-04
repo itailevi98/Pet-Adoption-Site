@@ -1,9 +1,13 @@
 body {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Mukta', sans-serif;
+  font-size: 18px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: rgb(228, 225, 225);
+}
+
+h1 {
+  font-size: 50px;
 }
 
 code {

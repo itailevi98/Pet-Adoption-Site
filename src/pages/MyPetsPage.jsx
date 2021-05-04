@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import NoPetsTextComponent from "../components/MyPetsPage/NoPetsTextComponent";
-import NavbarComponent from "../components/NavbarComponent/NavbarComponent";
 import { useAuth } from "../context/AuthContext";
 import { getPetById } from "../lib/petsApi";
 import { getPetsByUser } from "../lib/userPetsApi";
@@ -35,9 +34,8 @@ export default function MyPetsPage() {
 
     return (
         <div>
-            <NavbarComponent />
             <div className="d-flex align-items-center flex-column">
-                <h1>These are all the pets you have saved</h1>
+                <h1>These are all the pets you have saved.</h1>
                 <div>
                     <div className="form-check">
                         <input
@@ -55,7 +53,7 @@ export default function MyPetsPage() {
                             className="form-check-label"
                             htmlFor="flexRadioDefault1"
                         >
-                            Display Owned Pets
+                            Owned Pets
                         </label>
                     </div>
                     <div className="form-check">
@@ -71,7 +69,7 @@ export default function MyPetsPage() {
                             checked={displaySavedPets}
                         />
                         <label className="form-check-label" htmlFor="savedPets">
-                            Display Saved Pets
+                            Saved Pets
                         </label>
                     </div>
                 </div>
@@ -89,7 +87,7 @@ export default function MyPetsPage() {
                     </div>
                 )}
                 {displaySavedPets && savedPets.length === 0 && (
-                    <div>No saved pets</div>
+                    <div>You currently do not have any pets saved!</div>
                 )}
             </div>
         </div>

@@ -1,5 +1,5 @@
 import { Link, withRouter } from "react-router-dom";
-import './cardComponentStyles.css';
+import styles from "./cardComponent.module.css";
 
 function CardComponent(props) {
     const { pet } = props;
@@ -12,11 +12,20 @@ function CardComponent(props) {
     const linkName = `/pets/${pet_id}`;
 
     return ( 
-        <div className="card-container d-flex flex-column p-4 m-3">
-            <img src={picture} alt="Pet"/>
-            <h3>{name}</h3>
-            <h4>{adoption_status}</h4>
-            <Link to={linkName}>See more</Link>
+        <div className={styles.cardContainer}>
+            <div className={styles.imageContainer}>
+                <img className={styles.cardImage} src={picture} alt="Pet"/>
+            </div>
+            <div className={styles.cardContent}>
+                <h3>{name}</h3>
+                <h4>
+                    {adoption_status === "AVAILABLE" && "Available"}
+                    {adoption_status === "ADOPTED" && "Adopted"}
+                    {adoption_status === "FOSTERED" && "Fostered"}
+                </h4>
+                <Link to={linkName}>See more</Link>
+            </div>
+            
         </div>
     );
 }

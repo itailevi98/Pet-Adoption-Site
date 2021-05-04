@@ -1,0 +1,15 @@
+.petPicture {
+    width: auto;
+    height: 100%;
+}
+
+.imageContainer {
+    display: flex;
+    overflow: hidden;
+    width: 300px; 
+    height: 300px; 
+    margin: 0 auto;
+    border: 2px solid black;
+    justify-content: center;
+    border-radius: 50%;
+}

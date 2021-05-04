@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useLocation, withRouter } from "react-router";
-import NavbarComponent from "../components/NavbarComponent/NavbarComponent";
 import { useAuth } from "../context/AuthContext";
 import { getPetById, savePet, deleteSavedPet, adoptPet, returnPet } from "../lib/petsApi";
 import { getPetsByUser } from "../lib/userPetsApi";
+import styles from "./petPageStyles.module.css";
 
 function PetPage() {
     const [pet, setPet] = useState({});
@@ -30,18 +30,29 @@ function PetPage() {
         await adoptPet(pet.pet_id, "adopt", token);
         setIsAvailable(false);
         setIsOwnedByUser(true);
+        refetchPet();
     }
 
     async function handleOnFosterClick() {
         await adoptPet(pet.pet_id, "foster", token);
         setIsAvailable(false);
         setIsOwnedByUser(true);
+        refetchPet();
     }
 
     async function handleOnReturnClick() {
         await returnPet(pet.pet_id, token);
         setIsAvailable(true);
         setIsOwnedByUser(false);
+        refetchPet();
+    }
+
+    async function refetchPet() {
+        const response = await getPetById(petId);
+        if (response) {
+            if (response.adoption_status === "AVAILABLE") setIsAvailable(true);
+            setPet(response);
+        }
     }
 
     useEffect(() => {
@@ -78,43 +89,52 @@ function PetPage() {
     }, [pet.pet_id, petId, token]);
     
     return (
-        <div>
-            <NavbarComponent />
-            <div className="d-flex flex-column align-items-center">
-                <img src={pet.picture} alt="Pet"/>
-                <h3>Name: {pet.name}</h3>
-                <h3>Status: {pet.adoption_status}</h3>
-                <h3>Type: {pet.type}</h3>
-                <ul>
-                    <li>Weight: {pet.weight}kg</li>
-                    <li>Height: {pet.height}m</li>
-                    <li>Color: {pet.color}</li>
-                    <li>Bio: {pet.bio}</li>
-                    <li>Hypoallergenic: {pet.hypoallergenic === 0 ? "No" : "Yes"}</li>
-                    <li>Dietary Restrictions: {pet.dietaryRestrictions ? pet.dietaryRestrictions : "None"}</li>
-                    <li>Breed: {pet.breed}</li>
-                </ul>
-                { token && <div>
-                    {isAvailable && <div>
-                        <button onClick={() => handleOnAdoptClick()} className="btn btn-primary"> 
-                            Adopt
-                        </button>
-                        <button onClick={() => handleOnFosterClick()} className="btn btn-primary">
-                            Foster
-                        </button>
-                    </div>}
-                    {!isAvailable && isOwnedByUser && <button onClick={() => handleOnReturnClick()} className="btn btn-primary">
-                        Return
-                    </button>}
-                    {!isAvailable && !isOwnedByUser && <button disabled className="btn btn-primary">
-                        This pet is not available
-                    </button>}
-                    <button onClick={() => handleOnSavePetClick()} className="btn btn-primary">
-                        {isSaved && "Unsave"}
-                        {!isSaved && "Save in My Pets"}
-                    </button>
-                </div>}
+        <div className="container mb-3">
+            <div className="row">
+                <div className="col-md-6 m-auto">
+                    <div className={styles.imageContainer}>
+                        <img className={styles.petPicture} src={pet.picture} alt="Pet"/>
+                    </div>
+                </div>
+                <div className="col-md-6 d-flex flex-column align-items-center mt-3">
+                    <h3><b>Name:</b> {pet.name}</h3>
+                    <h3><b>Status: </b> 
+                        {pet.adoption_status === "ADOPTED" && "Adopted"}
+                        {pet.adoption_status === "FOSTERED" && "Fostered"}
+                        {pet.adoption_status === "AVAILABLE" && "Available"} 
+                    </h3>
+                    <h3><b>Type:</b> {pet.type}</h3>
+                    <ul className="list-group">
+                        <li className="list-group-item"><b>Weight:</b> {pet.weight}kg</li>
+                        <li className="list-group-item"><b>Height:</b> {pet.height}m</li>
+                        <li className="list-group-item"><b>Color:</b> {pet.color}</li>
+                        <li className="list-group-item"><b>Bio:</b> {pet.bio}</li>
+                        <li className="list-group-item"><b>Hypoallergenic:</b> {pet.hypoallergenic === 0 ? "No" : "Yes"}</li>
+                        <li className="list-group-item"><b>Dietary Restrictions:</b> {pet.dietaryRestrictions ? pet.dietaryRestrictions : "None"}</li>
+                        <li className="list-group-item"><b>Breed:</b> {pet.breed}</li>
+                    </ul>
+                </div>
             </div>
+            { token && <div className="mt-4 row">
+                {isAvailable && <div className="col"><button onClick={() => handleOnAdoptClick()} className="btn btn-info" style={{ width: "100%" }}> 
+                        Adopt
+                </button></div>}
+                {isAvailable && <div className="col"><button onClick={() => handleOnFosterClick()} className="btn btn-info" style={{ width: "100%" }}>
+                    Foster
+                </button></div>}
+                {!isAvailable && isOwnedByUser && <div className="col"><button onClick={() => handleOnReturnClick()} className="btn btn-info" style={{ width: "100%" }}>
+                    Return
+                </button></div>}
+                {!isAvailable && !isOwnedByUser && <div className="col"><button disabled className="btn btn-info" style={{ width: "100%" }}>
+                    This pet is not available
+                </button></div>}
+                <div className="col">
+                    <button onClick={() => handleOnSavePetClick()} className="btn btn-info" style={{ width: "100%" }}>
+                        {isSaved && "Unsave"}
+                        {!isSaved && "Save"}
+                    </button>
+                </div>
+            </div>}
         </div>
     );
 }

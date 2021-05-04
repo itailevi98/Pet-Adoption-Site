@@ -37,7 +37,7 @@ export default function UserDetails(props) {
     }
 
     return (
-        <div>
+        <div className="text-center">
             {error && "Error getting information from server."}
             {!error && <ul className="list-group list-group-flush">
                 <li className="list-group-item">Name: {user.first_name} {user.last_name}</li>
@@ -46,7 +46,7 @@ export default function UserDetails(props) {
                 <li className="list-group-item">Bio: {user.bio}</li>
                 <li className="list-group-item">Role: {user.role}</li>
                 <li className="list-group-item">Created Date: {user.created_date}</li>
-                <h3>User Owned Pets: </h3>
+                <h3 className="mt-3">User Owned Pets: </h3>
                 {userPets.length === 0 && "User does not own any pets"}
                 {userPets.length > 0 && <ul className="list-group">
                     {userPets.map((pet) => {

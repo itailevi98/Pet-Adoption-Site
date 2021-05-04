@@ -28,6 +28,7 @@ export default function UsersComponent() {
     return (
         <div>
             <h1>Users</h1>
+            <h3>Click on a user to display their details, and the pets that they own.</h3>
             <ul className="list-group">
                 {users.map(user => {
                     return <button onClick={(event) => handleOnClick(user)} key={user.id} className="list-group-item">{user.first_name} {user.last_name} ({user.email})</button>

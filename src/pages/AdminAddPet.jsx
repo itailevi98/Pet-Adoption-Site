@@ -1,24 +1,22 @@
-import NavbarComponent from "../components/NavbarComponent/NavbarComponent";
 import FormComponent from "../components/Admin/AdminPetPage/FormComponent";
-import { useEffect } from "react";
-import { getUserById } from "../lib/userApi";
 import { useAuth } from "../context/AuthContext";
 import { Redirect } from "react-router";
 
 export default function AdminPet() {
-    const { token } = useAuth();
+    const { user } = useAuth();
 
-    useEffect(() => {
-        getUserById(token).then(user => {
-            if (user.role !== "admin"){
-                <Redirect to="/"/>
-            }
-        })
-    }, [token]);
+    if (!user || user.role !== "admin") {
+        return <Redirect to="/"/>
+    }
 
     return (
         <div>
-            <NavbarComponent />
+            <div className="text-center">
+                <h1>Add a Pet</h1>
+                <h3>Make sure all the fields are in the appropriate format.</h3>
+                <p>When you are done, click "Add Pet".</p>
+            </div>
+            
             <FormComponent />
         </div>
     );
