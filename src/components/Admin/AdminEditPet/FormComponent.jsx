@@ -89,9 +89,11 @@ function FormComponent(props) {
             className="container d-flex flex-column justify-content-center"
             onSubmit={(event) => handleOnSubmit(event)}
         >
-            {inputs.petPicture && <div className={styles.imageContainer}>
-                <img className={styles.petPicture} src={inputs.petPicture} alt="Pet"/>
-            </div>}
+            <div className={styles.imageContainer}>
+                {inputs.petPicture !== "null" && <img className={styles.petPicture} src={inputs.petPicture} alt="Pet"/>}
+                {inputs.petPicture === "null" && <span className="my-auto">No Pet Picture Found!</span>}
+            </div>
+            
 
             <label htmlFor="type" className="col-form-label">
                 Animal Type:
@@ -122,6 +124,8 @@ function FormComponent(props) {
                 name="petName"
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.petName ? inputs.petName : ""}
+                placeholder="Required"
+                required
             />
             <label className="mt-3">Pet Status:</label>
             <div>
@@ -204,6 +208,7 @@ function FormComponent(props) {
                 step=".01"
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.height ? inputs.height : ""}
+                placeholder="Required"
                 required
             />
 
@@ -218,6 +223,7 @@ function FormComponent(props) {
                 step=".01"
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.weight ? inputs.weight : ""}
+                placeholder="Required"
                 required
             />
 
@@ -231,6 +237,7 @@ function FormComponent(props) {
                 name="color"
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.color ? inputs.color : ""}
+                placeholder="Required"
                 required
             />
 
@@ -244,6 +251,7 @@ function FormComponent(props) {
                 name="bio"
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.bio ? inputs.bio : ""}
+                placeholder="Required"
                 required
             />
 
@@ -297,6 +305,7 @@ function FormComponent(props) {
                 name="dietaryRestrictions"
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.dietaryRestrictions ? inputs.dietaryRestrictions : ""}
+                placeholder="Required"
                 required
             />
 
@@ -310,12 +319,13 @@ function FormComponent(props) {
                 name="breed"
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.breed ? inputs.breed : ""}
+                placeholder="Required"
                 required
             />
 
-            <button type="submit" className="btn btn-primary mt-2 mb-3 w-50 mx-auto">
+            {!loading && <button type="submit" className="btn btn-primary mt-2 mb-3 w-50 mx-auto">
                 Update Pet
-            </button>
+            </button>}
             {success && (
                 <div className="alert alert-success" role="alert">
                     Pet has been edited

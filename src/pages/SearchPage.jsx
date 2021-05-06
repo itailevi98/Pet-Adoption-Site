@@ -73,8 +73,7 @@ function SearchPage() {
                 pathname:"/search",
                 search: historySearchParams
             });
-        }
-        
+        }        
     }
 
     useEffect(() => {
@@ -277,7 +276,7 @@ function SearchPage() {
                         </div>
                     </div>
                 </div>
-                <button className="mt-2 btn btn-primary" type="submit">
+                <button className="mt-2 btn btn-info" type="submit">
                     Search
                 </button>
             </form>

@@ -34,7 +34,7 @@ export default function MyPetsPage() {
 
     return (
         <div>
-            <div className="d-flex align-items-center flex-column">
+            <div className="d-flex align-items-center text-center flex-column">
                 <h1>These are all the pets you have saved.</h1>
                 <div>
                     <div className="form-check">

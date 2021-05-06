@@ -6,8 +6,8 @@ export default function HeaderComponent() {
     const { user } = useAuth();
     return (
         <h1 className={styles.header}>
-            {user && `Welcome ${user.first_name} ${user.last_name}!`}
-            {!user && "Find The Perfect Pet For You!"}
+            {user && `Welcome back, ${user.first_name} ${user.last_name}.`}
+            {!user && "Find the perfect pet for you."}
         </h1>  
     );
 }

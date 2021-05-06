@@ -93,7 +93,8 @@ function PetPage() {
             <div className="row">
                 <div className="col-md-6 m-auto">
                     <div className={styles.imageContainer}>
-                        <img className={styles.petPicture} src={pet.picture} alt="Pet"/>
+                        {pet.picture !== "null" && <img className={styles.petPicture} src={pet.picture} alt="Pet"/>}
+                        {pet.picture === "null" && <span className="my-auto">No Pet Picture Found!</span>}
                     </div>
                 </div>
                 <div className="col-md-6 d-flex flex-column align-items-center mt-3">

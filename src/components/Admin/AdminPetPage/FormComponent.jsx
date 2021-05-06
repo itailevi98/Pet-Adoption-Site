@@ -97,6 +97,8 @@ function FormComponent() {
                 name="petName"
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.petName ? inputs.petName : ""}
+                placeholder="Required"
+                required
             />
             <label className="mt-3">Pet Status:</label>
             <div>
@@ -166,7 +168,6 @@ function FormComponent() {
                 name="petPicture"
                 onChange={(event) => setPetPicture(event.target.files[0])}
                 accept="image/*"
-                required
             />
 
             <label htmlFor="height" className="col-form-label">
@@ -181,6 +182,7 @@ function FormComponent() {
                 step=".01"
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.height ? inputs.height : ""}
+                placeholder="Required"
                 required
             />
 
@@ -196,6 +198,7 @@ function FormComponent() {
                 value={inputs.weight ? inputs.weight : ""}
                 min="0"
                 step=".01"
+                placeholder="Required"
                 required
             />
 
@@ -209,6 +212,7 @@ function FormComponent() {
                 name="color"
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.color ? inputs.color : ""}
+                placeholder="Required"
                 required
             />
 
@@ -222,6 +226,7 @@ function FormComponent() {
                 name="bio"
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.bio ? inputs.bio : ""}
+                placeholder="Required"
                 required
             />
 
@@ -275,6 +280,7 @@ function FormComponent() {
                 name="dietaryRestrictions"
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.dietaryRestrictions ? inputs.dietaryRestrictions : ""}
+                placeholder="Required"
                 required
             />
 
@@ -288,12 +294,13 @@ function FormComponent() {
                 name="breed"
                 onChange={(event) => handleOnChange(event)}
                 value={inputs.breed ? inputs.breed : ""}
+                placeholder="Required"
                 required
             />
 
-            <button type="submit" className="btn btn-primary mt-2 w-50 mx-auto">
+            {!loading && <button type="submit" className="btn btn-primary mt-2 w-50 mx-auto">
                 Add Pet
-            </button>
+            </button>}
             {success && (
                 <div className="alert alert-success mt-3 mb-3" role="alert">
                     Pet has been added. Page will reload soon.

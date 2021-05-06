@@ -15,6 +15,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminAddPet from "./pages/AdminAddPet";
 import AdminEditPetPage from "./pages/AdminEditPetPage";
 import NavbarComponent from "./components/NavbarComponent/NavbarComponent";
+import ScrollToTop from "./components/ScrollToTop";
 
 function PrivateRoute({ children, ...rest }) {
     const { token } = useAuth();
@@ -48,38 +49,40 @@ function AppRouter() {
         <div>
             
             <Router>
-                <NavbarComponent />
-                <AnimatedSwitch
-                atEnter={{ opacity: 0 }}
-                atLeave={{ opacity: 0 }}
-                atActive={{ opacity: 1 }}
-                className="switch-wrapper"
-                >
-                    <Route exact path="/">
-                        <Homepage />
-                    </Route>
-                    <Route exact path="/search">
-                        <SearchPage />
-                    </Route>
-                    <Route exact path="/pets/:id">
-                        <PetPage />
-                    </Route>
-                    <Route exact path="/admin">
-                        <AdminDashboard />
-                    </Route>
-                    <Route exact path="/admin/pet/add">
-                        <AdminAddPet />
-                    </Route>
-                    <Route exact path="/admin/pet/:id">
-                        <AdminEditPetPage />
-                    </Route>
-                    <PrivateRoute exact path="/my-pets">
-                        <MyPetsPage />
-                    </PrivateRoute>
-                    <PrivateRoute exact path="/profile">
-                        <ProfilePage />
-                    </PrivateRoute>
-                </AnimatedSwitch>
+                <ScrollToTop>
+                    <NavbarComponent />
+                    <AnimatedSwitch
+                    atEnter={{ opacity: 0 }}
+                    atLeave={{ opacity: 0 }}
+                    atActive={{ opacity: 1 }}
+                    className="switch-wrapper"
+                    >
+                        <Route exact path="/">
+                            <Homepage />
+                        </Route>
+                        <Route exact path="/search">
+                            <SearchPage />
+                        </Route>
+                        <Route exact path="/pets/:id">
+                            <PetPage />
+                        </Route>
+                        <Route exact path="/admin">
+                            <AdminDashboard />
+                        </Route>
+                        <Route exact path="/admin/pet/add">
+                            <AdminAddPet />
+                        </Route>
+                        <Route exact path="/admin/pet/:id">
+                            <AdminEditPetPage />
+                        </Route>
+                        <PrivateRoute exact path="/my-pets">
+                            <MyPetsPage />
+                        </PrivateRoute>
+                        <PrivateRoute exact path="/profile">
+                            <ProfilePage />
+                        </PrivateRoute>
+                    </AnimatedSwitch>
+                </ScrollToTop>
             </Router>
         </div>
     );

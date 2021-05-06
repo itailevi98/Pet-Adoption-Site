@@ -15,12 +15,15 @@ function FormComponent() {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(false);
     const [passwordsError, setPasswordsError] = useState(false);
+    const [loading, setLoading] = useState(false);
     const history = useHistory();
 
     async function handleOnSubmit(event) {
         event.preventDefault();
+        setLoading(true);
         if (password !== password2) {
             setPasswordsError(true);
+            setLoading(false);
             return;
         }
         setPasswordsError(false);
@@ -48,12 +51,14 @@ function FormComponent() {
             }
             await updateUser(updatedUser, token);
             setSuccess(true);
+            setLoading(false);
             login(token);
             setTimeout(() => {
                 history.go(0);
             }, 3000);
             
         } catch (err) {
+            setLoading(false);
             setError(true);
         }
     }
@@ -162,14 +167,22 @@ function FormComponent() {
                 name="bio"
                 onChange={(event) => setBio(event.target.value)}
                 value={bio}
+                placeholder="Optional..."
             />
 
-            <button type="submit" className="btn btn-primary mt-2 w-50 mx-auto">Update Profile</button>
+            {!loading && <button type="submit" className="btn btn-primary mt-2 w-50 mx-auto">
+                Update Profile
+            </button>}
             {success && 
                 <div className="alert alert-success mt-3" role="alert">
                     Profile updated. Page will reload soon.
                 </div>
             }
+            {loading && <div className="d-flex justify-content-center mt-3 mb-3">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>}
         </form>
     );
 }

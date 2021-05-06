@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { getPetById } from "../../../lib/petsApi";
 import { getFullUserById } from "../../../lib/userApi";
 
@@ -50,7 +51,8 @@ export default function UserDetails(props) {
                 {userPets.length === 0 && "User does not own any pets"}
                 {userPets.length > 0 && <ul className="list-group">
                     {userPets.map((pet) => {
-                        return <li key={pet.pet_id} className="list-group-item">Pet ID: {pet.pet_id}, Name: {pet.name} </li>
+                        const petLink = `/pets/${pet.pet_id}`;
+                        return <Link to={petLink} key={pet.pet_id} className="list-group-item">Pet ID: {pet.pet_id}, Name: {pet.name} </Link>
                     })}
                 </ul>}
             </ul>}

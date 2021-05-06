@@ -13,8 +13,9 @@ function CardComponent(props) {
 
     return ( 
         <div className={styles.cardContainer}>
-            <div className={styles.imageContainer}>
-                <img className={styles.cardImage} src={picture} alt="Pet"/>
+           <div className={styles.imageContainer}>
+                {picture !== "null" && <img className={styles.cardImage} src={picture} alt="Pet"/>}
+                {picture === "null" && <span className="my-auto mx-4">No Pet Picture Found!</span>}
             </div>
             <div className={styles.cardContent}>
                 <h3>{name}</h3>
