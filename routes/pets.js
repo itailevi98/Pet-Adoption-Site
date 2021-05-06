@@ -26,10 +26,16 @@ router.post("/",
     postPetValidationSchema(AddPetSchema),
     async (req, res) => {
         const pet = req.body;
-        const result = await uploadToCloudinary(req.file.path);
-        fs.unlinkSync(req.file.path);
-        const fileUrl = result.secure_url;
-        pet["picture"] = fileUrl;
+        if (pet.petPicture !== "null") {
+            const result = await uploadToCloudinary(req.file.path);
+            fs.unlinkSync(req.file.path);
+            const fileUrl = result.secure_url;
+            pet["picture"] = fileUrl;
+        }
+        else {
+            delete pet.petPicture;
+            pet.picture = "null";
+        }
         const added = await addNewPet(pet);
         if (added) {
             res.status(201).send({ pet: pet });
