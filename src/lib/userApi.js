@@ -1,6 +1,8 @@
 import axios from "axios";
+import { config } from "../configs/constants";
 
-const BaseUrl = 'http://localhost:5050';
+
+const BaseUrl = config.API_URL;
 
 function getAuthConfig(token) {
     return {
@@ -41,5 +43,10 @@ export async function getUsers() {
 
 export async function getFullUserById(id) {
     const response = await axios.get(`${BaseUrl}/user/${id}/full`);
+    return response.data;
+}
+
+export async function changeUserRole(userId, newRole) {
+    const response = await axios.put(`${BaseUrl}/user/${userId}/role`, {newRole: newRole });
     return response.data;
 }

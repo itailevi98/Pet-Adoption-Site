@@ -1,6 +1,8 @@
 import axios from "axios";
+import { config } from "../configs/constants";
 
-const BaseUrl = 'http://localhost:5050';
+
+const BaseUrl = config.API_URL;
 
 function getAuthConfig(token) {
     return {

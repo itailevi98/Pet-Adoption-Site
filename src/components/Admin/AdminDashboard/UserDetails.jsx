@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory, withRouter } from "react-router-dom";
 import { getPetById } from "../../../lib/petsApi";
-import { getFullUserById } from "../../../lib/userApi";
+import { changeUserRole, getFullUserById } from "../../../lib/userApi";
 
-export default function UserDetails(props) {
+function UserDetails(props) {
     const [user, setUser] = useState();
     const [userPets, setUserPets] = useState([]);
     const { userId } = props;
     const [error, setError] = useState(false);
+    const history = useHistory();
+
+    async function handleOnClick() {
+        if (user.role === "user") await changeUserRole(user.id, "admin");
+        else await changeUserRole(user.id, "user");
+        history.go(0);
+    }
 
     useEffect(() => {
         async function fetchFullUserDetails(userId) {
@@ -55,8 +62,13 @@ export default function UserDetails(props) {
                         return <Link to={petLink} key={pet.pet_id} className="list-group-item">Pet ID: {pet.pet_id}, Name: {pet.name} </Link>
                     })}
                 </ul>}
+                <button onClick={() => handleOnClick()} className="btn btn-primary mt-3">
+                    {user.role === "user" && "Make Admin"}
+                    {user.role === "admin" && "Make User"}
+                </button>
             </ul>}
         </div>
-        
     );
 }
+
+export default withRouter(UserDetails);

@@ -47,7 +47,6 @@ function AppRouter() {
 
     return (
         <div>
-            
             <Router>
                 <ScrollToTop>
                     <NavbarComponent />

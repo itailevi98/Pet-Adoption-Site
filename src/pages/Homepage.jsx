@@ -7,7 +7,7 @@ import SignupComponent from "../components/Homepage/SignupComponent";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import styles from "../components/Homepage/styles/homepage.module.css";
-import image from "../components/Homepage/images/animals-lined-up.jpeg";
+import image from "../assets/animals-lined-up.jpeg";
 
 Modal.setAppElement("#root");
 
