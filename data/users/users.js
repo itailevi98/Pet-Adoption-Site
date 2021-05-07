@@ -1,6 +1,19 @@
 const { query } = require('../../lib/db');
 const SQL = require('@nearform/sql');
 
+async function addSuperUser(superUser){ 
+    const { email, hash, firstName, lastName, phoneNumber, role } = superUser;
+    try {
+        await query(SQL`INSERT INTO users 
+        (email, password_hash, first_name, last_name, phone_number, role) 
+        VALUES (${email}, ${hash}, ${firstName}, ${lastName}, ${phoneNumber}, ${role})`);
+        return true;
+    } catch (err){
+        return false;
+    }
+}
+exports.addSuperUser = addSuperUser;
+
 async function addNewUser(newUser) {
     const { email, hash, firstName, lastName, phoneNumber } = newUser;
     try {
@@ -51,3 +64,8 @@ async function getFullUserById(id) {
     return { user, petsRows };
 }
 exports.getFullUserById = getFullUserById;
+
+async function updateUserRole(id, newRole) {
+    await query(SQL`UPDATE users SET role=${newRole} WHERE id=${id}`);
+}
+exports.updateUserRole = updateUserRole;

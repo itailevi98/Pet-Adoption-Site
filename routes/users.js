@@ -1,5 +1,5 @@
 const express = require('express');
-const { getUserById, updateUser, getUsers, getFullUserById } = require("../data/users/users");
+const { getUserById, updateUser, getUsers, getFullUserById, updateUserRole } = require("../data/users/users");
 const { auth } = require("../middlewares/auth");
 const bcrypt = require('bcrypt');
 
@@ -93,6 +93,17 @@ router.get('/:id/full', async (req, res, next) => {
             res.status(404).send({ error: "User not found with that ID" });
             return;
         }
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.put("/:id/role", async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { newRole } = req.body;
+        await updateUserRole(id, newRole);
+        res.status(201).send({ status: "User status updated." });
     } catch (err) {
         next(err);
     }

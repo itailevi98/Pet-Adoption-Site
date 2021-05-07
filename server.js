@@ -10,7 +10,7 @@ const cors = require("cors");
 const { NewUserValidateSchema } = require("./data/users/userSignupSchema");
 const { UserLoginValidateSchema } = require("./data/users/userLoginSchema");
 const getUserValidationMiddleware = require("./middlewares/userValidation");
-const { addNewUser, getUserByEmail } = require("./data/users/users"); 
+const { addNewUser, getUserByEmail, addSuperUser } = require("./data/users/users"); 
 const petsRouter = require("./routes/pets"); 
 const userRouter = require("./routes/users");
 const { postgrator } = require("./lib/db");
@@ -32,12 +32,36 @@ const host = process.env.HOST;
 
 postgrator.migrate().then((result) => {
     console.log(`migrated db successfully:`, result);
-    app.listen(port, host, () => {
+    app.listen(port, host, async () => {
+        const existsSuper = await getUserByEmail("super@user");
+        if (!existsSuper) {
+            const superUser = {
+                email: "super@user",
+                password: "superuserpassword",
+                firstName: "super",
+                lastName: "user",
+                phoneNumber: "1111111111",
+                role: "admin"
+            };
+            bcrypt.hash(superUser.password, 10, async (err, hash) => {
+                try {
+                    if (err) next(err);
+                    else {
+                        delete superUser.password;
+                        superUser.hash = hash;
+                        const response = await addSuperUser(superUser);
+                    }
+                }
+                catch (err) {
+                    next(err);
+                }
+            });
+        }
       console.log(`server is listening at http://${host}:${port}`);
     });
 }).catch(error => console.error(error));
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
     res.status(200);
     res.send({text: "server is up and running"});
 });
