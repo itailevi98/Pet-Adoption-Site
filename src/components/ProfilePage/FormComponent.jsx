@@ -49,6 +49,16 @@ function FormComponent() {
                     bio,
                 };
             }
+            if (phoneNumber.length > 10) {
+                setError(true);
+                setLoading(false);
+                return;
+            }
+            if (isNaN(phoneNumber)) {
+                setError(true);
+                setLoading(false);
+                return;
+            }
             await updateUser(updatedUser, token);
             setSuccess(true);
             setLoading(false);
@@ -80,16 +90,6 @@ function FormComponent() {
 
     return (
         <form className="p-2 m-2 d-flex flex-column justify-content-center" onSubmit={(event) => handleOnSubmit(event)}>
-            {error && 
-                <div className="alert alert-danger mt-3 mb-3" role="alert">
-                    <p>Error updating profile:</p>
-                    <ul>
-                        <li>Do not change to an already existing username</li>
-                        <li>Make sure the passwords are equal (if you are changing your password)</li>
-                        <li>Make sure all the fields are in the correct format</li>
-                    </ul>
-                </div>
-            } 
             <label htmlFor="email" className="col-form-label">Email</label>
             <input 
                 type="email" 
@@ -178,6 +178,16 @@ function FormComponent() {
                     Profile updated. Page will reload soon.
                 </div>
             }
+            {error && 
+                <div className="alert alert-danger mt-3 mb-3" role="alert">
+                    <p>Error updating profile:</p>
+                    <ul>
+                        <li>Do not change to an already existing username</li>
+                        <li>Make sure the passwords are equal (if you are changing your password)</li>
+                        <li>Make sure all the fields are in the correct format (ex: phone # is max 10 numbers)</li>
+                    </ul>
+                </div>
+            } 
             {loading && <div className="d-flex justify-content-center mt-3 mb-3">
                 <div className="spinner-border text-primary" role="status">
                     <span className="visually-hidden">Loading...</span>
