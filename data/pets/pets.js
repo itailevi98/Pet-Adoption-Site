@@ -118,7 +118,6 @@ exports.returnPet = returnPet;
 
 async function updatePet(pet, pet_id) {
     const { type, petName, adoptionStatus, picture, height, weight, color, bio, hypoallergenic, dietaryRestrictions, breed } = pet;
-    console.log(pet);
     await query(SQL`UPDATE pets SET
         type=${type}, 
         name=${petName}, 
@@ -132,5 +131,6 @@ async function updatePet(pet, pet_id) {
         dietary_restrictions=${dietaryRestrictions}, 
         breed=${breed}
         WHERE pet_id=${pet_id}`);
+    if (adoptionStatus === "AVAILABLE") await query(SQL`UPDATE user_pets SET owned=0 WHERE pet_id=${pet_id}`);
 }
 exports.updatePet = updatePet;
