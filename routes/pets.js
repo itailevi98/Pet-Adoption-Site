@@ -16,7 +16,7 @@ router.post("/",
     upload.single('petPicture'),
     (req, res, next) => {
         //change the types to the corresponding types
-        req.body['hypoallergenic'] = true ? req.body.hypoallergenic === "true" : false;
+        req.body['hypoallergenic'] = req.body.hypoallergenic === "true"
         const height = parseFloat(req.body['height']);
         req.body['height'] = height;
         const weight = parseFloat(req.body['weight']);
@@ -48,7 +48,7 @@ router.put("/:id",
     upload.single('petPicture'),
     (req, res, next) => {
         //change the types to the corresponding types
-        req.body['hypoallergenic'] = true ? req.body.hypoallergenic === "true" : false;
+        req.body['hypoallergenic'] = req.body.hypoallergenic === "true";
         const height = parseFloat(req.body['height']);
         req.body['height'] = height;
         const weight = parseFloat(req.body['weight']);
