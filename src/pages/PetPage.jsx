@@ -111,7 +111,7 @@ function PetPage() {
                         <li className="list-group-item"><b>Color:</b> {pet.color}</li>
                         <li className="list-group-item"><b>Bio:</b> {pet.bio}</li>
                         <li className="list-group-item"><b>Hypoallergenic:</b> {pet.hypoallergenic === 0 ? "No" : "Yes"}</li>
-                        <li className="list-group-item"><b>Dietary Restrictions:</b> {pet.dietaryRestrictions ? pet.dietaryRestrictions : "None"}</li>
+                        <li className="list-group-item"><b>Dietary Restrictions:</b> {pet.dietary_restrictions ? pet.dietary_restrictions : "None"}</li>
                         <li className="list-group-item"><b>Breed:</b> {pet.breed}</li>
                     </ul>
                 </div>
