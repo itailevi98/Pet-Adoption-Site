@@ -30,6 +30,14 @@ export default function SignupComponent(props) {
             lastName,
             phoneNumber,
         };
+        if (phoneNumber.length > 10) {
+            setSignupError(true);
+            return;
+        }
+        if (isNaN(phoneNumber)) {
+            setSignupError(true);
+            return;
+        }
         try {
             await createUser(newUser);
             const token = await userLogin(email, password);

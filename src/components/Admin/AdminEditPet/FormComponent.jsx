@@ -66,9 +66,10 @@ function FormComponent(props) {
     useEffect(() => {
         async function fetchPet() {
             const pet = await getPetById(petId);
-            setAdoptionStatus(pet.adoption_status);
-            setHypoallergenic(pet.hypoallergenic);
             const { type, picture, name, height, weight, color, bio, dietary_restrictions, breed } = pet;
+            if (pet.hypoallergenic === 1) setHypoallergenic(true);
+            else setHypoallergenic(false)
+            setAdoptionStatus(pet.adoption_status);
             setInputs({
                 type,
                 petName: name,
@@ -260,7 +261,7 @@ function FormComponent(props) {
                 <div className="form-check">
                     <input
                         onChange={() => {
-                            setHypoallergenic(true);
+                            setHypoallergenic(!hypoallergenic);
                         }}
                         className="form-check-input"
                         type="radio"
@@ -278,7 +279,7 @@ function FormComponent(props) {
                 <div className="form-check">
                     <input
                         onChange={() => {
-                            setHypoallergenic(false);
+                            setHypoallergenic(!hypoallergenic);
                         }}
                         className="form-check-input"
                         type="radio"
