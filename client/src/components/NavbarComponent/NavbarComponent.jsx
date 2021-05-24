@@ -45,6 +45,9 @@ export default function NavbarComponent() {
                         {isAdmin && <li className="nav-item">
                             <NavLink activeClassName="active" className="nav-link" exact to="/admin/pet/add">Add Pet</NavLink>
                         </li>}
+                        {isAdmin && <li className="nav-item">
+                            <NavLink activeClassName="active" className="nav-link" exact to="/admin/newsfeed">Newsfeed</NavLink>
+                        </li>}
                         <li className="nav-item">
                             <div
                                 className="nav-link"
