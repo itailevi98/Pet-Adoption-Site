@@ -11,16 +11,19 @@ export default function SignupComponent(props) {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [passwordError, setPasswordError] = useState(false);
     const [signupError, setSignupError] = useState(false);
+    const [loading, setLoading] = useState(false);
     const { setModalClose } = props;
     const { login } = useAuth();
     
 
     async function handleOnFormSubmit(event) {
         event.preventDefault();
+        setLoading(true);
         setPasswordError(false);
         setSignupError(false);
         if (password !== password2) {
             setPasswordError(true);
+            setLoading(false);
             return;
         }
         const newUser = {
@@ -32,10 +35,12 @@ export default function SignupComponent(props) {
         };
         if (phoneNumber.length > 10) {
             setSignupError(true);
+            setLoading(false);
             return;
         }
         if (isNaN(phoneNumber)) {
             setSignupError(true);
+            setLoading(false);
             return;
         }
         try {
@@ -47,9 +52,11 @@ export default function SignupComponent(props) {
             } catch (err) {
                 setSignupError(true);
             }
+            setLoading(false);
         }
         catch (err) {
             setSignupError(true);
+            setLoading(false);
         }
     }
 
@@ -139,7 +146,10 @@ export default function SignupComponent(props) {
                     required
                 />
             </div>
-            <button type="submit" className="btn btn-primary mt-2 w-50 mx-auto">Signup</button>
+            {!loading && <button type="submit" className="btn btn-primary mt-2 w-50 mx-auto">Signup</button>}
+            {loading && <div className="mt-3 mx-auto spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </div>}
         </form>
     );
 }

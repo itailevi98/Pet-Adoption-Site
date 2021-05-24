@@ -8,12 +8,14 @@ export default function LoginComponent(props) {
     const [userNameError, setUserNameError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
     const [serverError, setServerError] = useState(false);
+    const [loading, setLoading] = useState(false);
     const { setModalClose } = props;
     const { login } = useAuth();
 
     async function handleOnFormSubmit(event) {
         event.preventDefault();
         try {
+            setLoading(true);
             setUserNameError(false);
             setPasswordError(false);
             setServerError(false);
@@ -25,6 +27,7 @@ export default function LoginComponent(props) {
             else {
                 setServerError(true);
             }
+            setLoading(false);
         } catch (err) {
             if (err.response.data.error === "Username does not exist") {
                 setUserNameError(true);
@@ -35,7 +38,7 @@ export default function LoginComponent(props) {
             else {
                 setServerError(true);
             }
-            
+            setLoading(false);
         }
         
     }
@@ -77,7 +80,10 @@ export default function LoginComponent(props) {
                 Server Error. Please try again later.
             </div>}
 
-            <button type="submit" className="btn btn-primary mt-2 w-50 mx-auto">Login</button>
+            {!loading && <button type="submit" className="btn btn-primary mt-2 w-50 mx-auto">Login</button>}
+            {loading && <div className="mt-3 mx-auto spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </div>}
         </form>
     );
 }
