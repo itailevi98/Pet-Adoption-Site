@@ -16,6 +16,8 @@ import AdminAddPet from "./pages/AdminAddPet";
 import AdminEditPetPage from "./pages/AdminEditPetPage";
 import NavbarComponent from "./components/NavbarComponent/NavbarComponent";
 import ScrollToTop from "./components/ScrollToTop";
+import ContactPage from "./pages/ContactPage";
+import AdminSupportPage from "./pages/AdminSupportPage";
 
 function PrivateRoute({ children, ...rest }) {
     const { token } = useAuth();
@@ -74,12 +76,19 @@ function AppRouter() {
                         <Route exact path="/admin/pet/:id">
                             <AdminEditPetPage />
                         </Route>
+                        <Route exact path="/contact">
+                            <ContactPage />
+                        </Route>
+                        <Route exact path="/admin/support">
+                            <AdminSupportPage />
+                        </Route>
                         <PrivateRoute exact path="/my-pets">
                             <MyPetsPage />
                         </PrivateRoute>
                         <PrivateRoute exact path="/profile">
                             <ProfilePage />
                         </PrivateRoute>
+                        
                     </AnimatedSwitch>
                 </ScrollToTop>
             </Router>

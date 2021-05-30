@@ -39,11 +39,17 @@ export default function NavbarComponent() {
                         <li className="nav-item">
                             <NavLink activeClassName="active" className="nav-link" to="/profile">My Profile</NavLink>
                         </li>
+                        <li className="nav-item">
+                            <NavLink activeClassName="active" className="nav-link" to="/contact">Contact</NavLink>
+                        </li>
                         {isAdmin && <li className="nav-item">
                             <NavLink activeClassName="active" className="nav-link" exact to="/admin">Admin Dashboard</NavLink>
                         </li>}
                         {isAdmin && <li className="nav-item">
                             <NavLink activeClassName="active" className="nav-link" exact to="/admin/pet/add">Add Pet</NavLink>
+                        </li>}
+                        {isAdmin && <li className="nav-item">
+                            <NavLink activeClassName="active" className="nav-link" exact to="/admin/support">Admin Support</NavLink>
                         </li>}
                         <li className="nav-item">
                             <div
@@ -63,8 +69,10 @@ export default function NavbarComponent() {
                         <li className="nav-item">
                             <NavLink activeClassName="active" className="nav-link" to="/search">Search</NavLink>
                         </li>
+                        <li className="nav-item">
+                            <NavLink activeClassName="active" className="nav-link" to="/contact">Contact</NavLink>
+                        </li>
                     </ul>}
-                    
                 </div>
             </div>
         </nav>

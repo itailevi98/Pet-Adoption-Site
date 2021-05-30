@@ -13,6 +13,7 @@ const getUserValidationMiddleware = require("./middlewares/userValidation");
 const { addNewUser, getUserByEmail, addSuperUser } = require("./data/users/users"); 
 const petsRouter = require("./routes/pets"); 
 const userRouter = require("./routes/users");
+const commentsRouter = require("./routes/comments");
 const { postgrator } = require("./lib/db");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -26,6 +27,7 @@ app.use(express.json());
 app.use("/" + uploadedFilesFolderName, express.static(uploadedFilesFolderName));
 app.use('/pet', petsRouter);
 app.use('/user', userRouter);
+app.use('/comment', commentsRouter);
 
 const port = process.env.PORT;
 const host = process.env.HOST;
