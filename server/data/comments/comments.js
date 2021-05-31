@@ -16,3 +16,8 @@ async function getComments() {
     return rows;
 }
 exports.getComments = getComments;
+
+async function deleteComment(commentId) {
+    await query(SQL`DELETE FROM contact_comments WHERE comment_id=${commentId}`);
+}
+exports.deleteComment = deleteComment;

@@ -24,13 +24,12 @@ export default function AdminSupportPage() {
         <div className="container">
             <h1 className="text-center">Admin Support Page</h1>
             <p className="text-center">Here are some things people have contacted you about.</p>
-            <ul>
+            <p className="text-center">When a comment is resolved, it will disappear on the page reload.</p>
+            <ul className="d-flex flex-column align-items-center">
                 {comments.map((comment) => {
                     return <CardComponent key={comment.comment_id} comment={comment}/>
                 })}
             </ul>
-            
         </div>
-        
     );
 }

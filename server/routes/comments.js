@@ -1,5 +1,5 @@
 const express = require('express');
-const { createComment, getComments } = require('../data/comments/comments');
+const { createComment, getComments, deleteComment } = require('../data/comments/comments');
 
 const router = express.Router();
 
@@ -18,6 +18,16 @@ router.get("/", async (req, res, next) => {
         const comments = await getComments();
         res.status(200).send({ comments: comments });
     } catch (err){
+        next(err);
+    }
+});
+
+router.delete("/:id", async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        await deleteComment(id);
+        res.status(201).send({ status: "Comment resolved" });
+    } catch (err) {
         next(err);
     }
 });

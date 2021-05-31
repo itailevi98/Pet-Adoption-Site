@@ -12,3 +12,8 @@ export async function getComments() {
     const response = await axios.get(`${BaseUrl}/comment`);
     return response.data.comments;
 }
+
+export async function deleteComment(comment) {
+    const response = await axios.delete(`${BaseUrl}/comment/${comment.comment_id}`);
+    return response.data.status;
+}
